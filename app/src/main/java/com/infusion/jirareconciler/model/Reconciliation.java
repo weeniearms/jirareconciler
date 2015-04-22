@@ -60,6 +60,7 @@ public class Reconciliation implements Serializable {
 
     public JSONObject toJSON() throws JSONException {
         JSONObject json = new JSONObject();
+        json.put(JSON_ID, id);
         json.put(JSON_BOARD, board);
         json.put(JSON_DATE, date.getTime());
 
