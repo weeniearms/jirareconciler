@@ -171,6 +171,16 @@ public class ReconciliationListFragment extends ListFragment {
         protected void onPostExecute(BoardDetails boardDetails) {
             progressDialog.dismiss();
 
+            if (boardDetails.getLanes().length == 0) {
+                Toast.makeText(getActivity(), R.string.no_lanes, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (boardDetails.getIssues().length == 0) {
+                Toast.makeText(getActivity(), R.string.no_issues, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             Intent captureIntent = new Intent(getActivity(), CaptureActivity.class);
             captureIntent.putExtra(CaptureFragment.EXTRA_BOARD, board);
             captureIntent.putExtra(CaptureFragment.EXTRA_BOARD_DETAILS, boardDetails);
