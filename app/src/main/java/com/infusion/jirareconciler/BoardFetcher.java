@@ -146,6 +146,6 @@ public class BoardFetcher {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String user = preferences.getString(SettingsFragment.PREF_JIRA_USER, null);
         String password = preferences.getString(SettingsFragment.PREF_JIRA_PASSWORD, null);
-        return "Basic " + new String(Base64.encode((user + ":" + password).getBytes(), Base64.DEFAULT));
+        return "Basic " + Base64.encodeToString((user + ":" + password).getBytes(), Base64.NO_WRAP);
     }
 }
