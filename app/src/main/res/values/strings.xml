@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">JIRA Reconciler</string>
+    <string name="settings">Settings</string>
+    <string name="reconciliation">Reconciliation</string>
+    <string name="issue_details">Issue details</string>
+    <string name="jira_url">JIRA URL</string>
+    <string name="jira_url_hint">Enter your JIRA URL</string>
+    <string name="user">User</string>
+    <string name="user_hint">Enter your JIRA user ID</string>
+    <string name="password">Password</string>
+    <string name="password_hint">Enter your JIRA password</string>
+    <string name="board">Board ID</string>
+    <string name="board_hint">Enter your Agile board ID</string>
+    <string name="scan_ticket">Scan ticket</string>
+    <string name="new_reconciliation">New reconciliation</string>
+    <string name="sprint">sprint</string>
+    <string name="date">Date</string>
+    <string name="issues">Issues</string>
+    <string name="board_picker_title">Select board:</string>
+</resources>

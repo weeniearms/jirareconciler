@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <SurfaceView
+            android:id="@+id/lane_camera_surface_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <FrameLayout
+            android:id="@+id/crop_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:background="#AA000000" />
+
+        <FrameLayout
+            android:id="@+id/crop_right"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="#AA000000"/>
+    </RelativeLayout>
+
+    <SeekBar
+        android:id="@+id/crop_size_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

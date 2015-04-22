@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="4dp">
+
+    <TextView
+        android:id="@+id/issue_list_item_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:text="Reconciliation sprint" />
+
+    <TextView
+        android:id="@+id/issue_list_item_board_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="TO DO"/>
+
+    <TextView
+        android:id="@+id/issue_list_item_jira_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:layout_below="@+id/issue_list_item_board_state"
+        android:layout_alignParentRight="true"
+        android:text="IN PROGRESS"/>
+
+</RelativeLayout>
