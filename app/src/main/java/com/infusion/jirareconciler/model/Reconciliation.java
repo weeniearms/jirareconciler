@@ -1,9 +1,10 @@
-package com.infusion.jirareconciler;
+package com.infusion.jirareconciler.model;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.UUID;
 /**
  * Created by rcieslak on 21/04/2015.
  */
-public class Reconciliation {
+public class Reconciliation implements Serializable {
     private static final String JSON_ID = "id";
     private static final String JSON_BOARD = "board";
     private static final String JSON_DATE = "date";
@@ -22,9 +23,9 @@ public class Reconciliation {
     private final Date date;
     private final List<Issue> issues;
 
-    public Reconciliation(String sprint) {
+    public Reconciliation(String board) {
         this.id = UUID.randomUUID();
-        this.board = sprint;
+        this.board = board;
         this.date = new Date();
         this.issues = new ArrayList<>();
     }

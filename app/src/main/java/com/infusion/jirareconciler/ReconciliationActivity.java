@@ -7,6 +7,9 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 
+import com.infusion.jirareconciler.model.Reconciliation;
+import com.infusion.jirareconciler.model.ReconciliationStore;
+
 import java.util.List;
 
 /**

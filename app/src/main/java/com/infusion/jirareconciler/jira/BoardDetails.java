@@ -1,4 +1,4 @@
-package com.infusion.jirareconciler;
+package com.infusion.jirareconciler.jira;
 
 import org.json.JSONArray;
 import org.json.JSONException;

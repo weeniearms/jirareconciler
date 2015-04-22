@@ -19,8 +19,14 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.infusion.jirareconciler.jira.Board;
+import com.infusion.jirareconciler.jira.BoardDetails;
+import com.infusion.jirareconciler.jira.JiraHelper;
+import com.infusion.jirareconciler.model.Reconciliation;
+import com.infusion.jirareconciler.model.ReconciliationStore;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by rcieslak on 20/04/2015.
@@ -31,7 +37,7 @@ public class ReconciliationListFragment extends ListFragment {
     private static final String DIALOG_BOARD = "board";
     private List<Reconciliation> reconciliations;
     private ProgressDialog progressDialog;
-    private BoardFetcher boardFetcher;
+    private JiraHelper boardFetcher;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,14 +46,18 @@ public class ReconciliationListFragment extends ListFragment {
         setRetainInstance(true);
         setHasOptionsMenu(true);
 
-        reconciliations = ReconciliationStore.get(getActivity()).getReconciliations();
-
-        setListAdapter(new ReconciliationAdapter(reconciliations));
+        updateReconciliations();
 
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setCancelable(false);
 
-        boardFetcher = new BoardFetcher(getActivity());
+        boardFetcher = new JiraHelper(getActivity());
+    }
+
+    private void updateReconciliations() {
+        reconciliations = ReconciliationStore.get(getActivity()).getReconciliations();
+
+        setListAdapter(new ReconciliationAdapter(reconciliations));
     }
 
     @Override
@@ -79,8 +89,12 @@ public class ReconciliationListFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
+        showReconciliation(reconciliations.get(position));
+    }
+
+    private void showReconciliation(Reconciliation reconciliation) {
         Intent intent = new Intent(getActivity(), ReconciliationActivity.class);
-        intent.putExtra(ReconciliationFragment.EXTRA_RECONCILIATION_ID, reconciliations.get(position).getId());
+        intent.putExtra(ReconciliationFragment.EXTRA_RECONCILIATION_ID, reconciliation.getId());
         startActivity(intent);
     }
 
@@ -100,7 +114,16 @@ public class ReconciliationListFragment extends ListFragment {
             case REQUEST_BOARD:
                 Board board = (Board) data.getSerializableExtra(BoardSelectorFragment.EXTRA_SELECTED_BOARD);
                 new FetchBoardDetailsTask().execute(board);
+                break;
             case REQUEST_CAPTURE:
+                Reconciliation reconciliation = (Reconciliation) data.getSerializableExtra(CaptureFragment.EXTRA_RECONCILIATION);
+                ReconciliationStore reconciliationStore = ReconciliationStore.get(getActivity());
+                reconciliationStore.addReconciliation(reconciliation);
+                reconciliationStore.saveReconciliations();
+
+                updateReconciliations();
+
+                showReconciliation(reconciliation);
                 break;
         }
 

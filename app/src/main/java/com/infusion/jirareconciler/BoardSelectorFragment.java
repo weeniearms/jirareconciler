@@ -12,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.infusion.jirareconciler.jira.Board;
+
 /**
  * Created by rcieslak on 21/04/2015.
  */

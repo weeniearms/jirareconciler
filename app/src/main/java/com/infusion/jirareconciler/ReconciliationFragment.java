@@ -13,6 +13,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.infusion.jirareconciler.model.Issue;
+import com.infusion.jirareconciler.model.Reconciliation;
+import com.infusion.jirareconciler.model.ReconciliationStore;
+
 import java.util.List;
 import java.util.UUID;
 

@@ -1,7 +1,9 @@
-package com.infusion.jirareconciler;
+package com.infusion.jirareconciler.model;
 
 import android.content.Context;
 import android.util.Log;
+
+import com.infusion.jirareconciler.model.Reconciliation;
 
 import org.json.JSONArray;
 import org.json.JSONException;

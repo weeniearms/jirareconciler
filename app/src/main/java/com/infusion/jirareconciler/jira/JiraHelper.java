@@ -1,4 +1,4 @@
-package com.infusion.jirareconciler;
+package com.infusion.jirareconciler.jira;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
+
+import com.infusion.jirareconciler.SettingsFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +33,7 @@ import javax.net.ssl.X509TrustManager;
 /**
  * Created by rcieslak on 21/04/2015.
  */
-public class BoardFetcher {
+public class JiraHelper {
     private static final String TAG = "BoardFetcher";
     private static final String PATH_BOARD_LIST = "rest/greenhopper/1.0/rapidviews/list";
     private static final String PATH_BOARD_DETAILS = "rest/greenhopper/1.0/xboard/work/allData.json";
@@ -39,7 +41,7 @@ public class BoardFetcher {
     private static final String JSON_VIEWS = "views";
     private final Context context;
 
-    public BoardFetcher(Context context) {
+    public JiraHelper(Context context) {
         this.context = context;
     }
 

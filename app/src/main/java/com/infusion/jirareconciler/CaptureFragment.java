@@ -1,5 +1,8 @@
 package com.infusion.jirareconciler;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +15,12 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
+import android.widget.Toast;
+
+import com.infusion.jirareconciler.jira.Board;
+import com.infusion.jirareconciler.jira.BoardDetails;
+import com.infusion.jirareconciler.reconciliation.IssueIdDecoder;
+import com.infusion.jirareconciler.reconciliation.Reconciler;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,11 +32,18 @@ public class CaptureFragment extends Fragment {
     private static final String TAG = "CaptureFragment";
     public static final String EXTRA_BOARD_DETAILS = "com.infusion.jirareconciler.board_details";
     public static final String EXTRA_BOARD = "com.infusion.jirareconciler.board";
+    public static final String EXTRA_RECONCILIATION = "com.infusion.jirareconciler.reconciliation";
     private SurfaceView surfaceView;
     private Camera camera;
     private View cropLeft;
     private View cropRight;
     private SeekBar cropSizeBar;
+    private ProgressDialog progressDialog;
+    private int currentLane;
+    private Board board;
+    private BoardDetails boardDetails;
+    private View cameraTrigger;
+    private Reconciler reconciler;
 
     public static CaptureFragment newInstance(Board board, BoardDetails boardDetails) {
         Bundle args = new Bundle();
@@ -45,11 +61,24 @@ public class CaptureFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         setRetainInstance(true);
+
+        board = (Board) getArguments().getSerializable(EXTRA_BOARD);
+        boardDetails = (BoardDetails) getArguments().getSerializable(EXTRA_BOARD_DETAILS);
+        reconciler = new Reconciler(board, boardDetails);
+
+        updateCurrentLane();
+    }
+
+    private void updateCurrentLane() {
+        getActivity().setTitle(boardDetails.getLanes()[currentLane]);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_capture, null);
+
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCancelable(false);
 
         cropLeft = view.findViewById(R.id.crop_left);
         cropRight = view.findViewById(R.id.crop_right);
@@ -89,9 +118,9 @@ public class CaptureFragment extends Fragment {
                 }
 
                 Camera.Parameters parameters = camera.getParameters();
-                Camera.Size size = getBestSupportedSize(parameters.getSupportedPreviewSizes());
+                Camera.Size size = getBestSupportedSize(parameters.getSupportedPreviewSizes(), null);
                 parameters.setPreviewSize(size.width, size.height);
-                size = getBestSupportedSize(parameters.getSupportedPictureSizes());
+                size = getBestSupportedSize(parameters.getSupportedPictureSizes(), size);
                 parameters.setPictureSize(size.width, size.height);
                 camera.setParameters(parameters);
                 try {
@@ -112,7 +141,57 @@ public class CaptureFragment extends Fragment {
             }
         });
 
+        cameraTrigger = view.findViewById(R.id.lane_camera_trigger);
+        cameraTrigger.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (camera == null) {
+                    return;
+                }
+
+                camera.takePicture(
+                        new Camera.ShutterCallback() {
+                            @Override
+                            public void onShutter() {
+                                progressDialog.show();
+                            }
+                        },
+                        null,
+                        new Camera.PictureCallback() {
+                            @Override
+                            public void onPictureTaken(byte[] data, Camera camera) {
+                                captureLane(data);
+
+                                progressDialog.dismiss();
+
+                                currentLane++;
+
+                                if (currentLane >= boardDetails.getLanes().length) {
+                                    Intent intent = new Intent();
+                                    intent.putExtra(EXTRA_RECONCILIATION, reconciler.reconcile());
+                                    getActivity().setResult(Activity.RESULT_OK, intent);
+                                    getActivity().finish();
+                                }
+                                else {
+                                    updateCurrentLane();
+                                    camera.startPreview();
+                                }
+                            }
+                        }
+                );
+            }
+        });
+
         return view;
+    }
+
+    private void captureLane(byte[] data) {
+        int cropPercentage = (surfaceView.getWidth() - 2 * cropLeft.getWidth()) * 100 / surfaceView.getWidth();
+        String[] issueIds = IssueIdDecoder.decode(data, cropPercentage);
+
+        reconciler.addLane(boardDetails.getLanes()[currentLane], issueIds);
+
+        Toast.makeText(getActivity(), "Found: " + issueIds.length, Toast.LENGTH_LONG).show();
     }
 
     private void updateCropSize(int progress) {
@@ -136,15 +215,26 @@ public class CaptureFragment extends Fragment {
         cropRight.invalidate();
     }
 
-    private Camera.Size getBestSupportedSize(List<Camera.Size> supportedPreviewSizes) {
-        Camera.Size bestSize = supportedPreviewSizes.get(0);
-        int largestArea = bestSize.width * bestSize.height;
+    private Camera.Size getBestSupportedSize(List<Camera.Size> supportedPreviewSizes, Camera.Size targetRatio) {
+        final double ASPECT_TOLERANCE = 0.05;
+
+        Camera.Size bestSize = null;
+        int largestArea = 0;
         for (Camera.Size size : supportedPreviewSizes) {
+            double aspectRatio = (double)size.width / size.height;
+            if (targetRatio != null && Math.abs(((double) targetRatio.width / targetRatio.height) - aspectRatio) > ASPECT_TOLERANCE) {
+                continue;
+            }
+
             int area = size.width * size.height;
             if (area > largestArea) {
                 bestSize = size;
                 largestArea = area;
             }
+        }
+
+        if (bestSize == null) {
+            return getBestSupportedSize(supportedPreviewSizes, null);
         }
 
         return bestSize;

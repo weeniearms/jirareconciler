@@ -1,4 +1,4 @@
-package com.infusion.jirareconciler;
+package com.infusion.jirareconciler.model;
 
 import android.content.Context;
 import android.util.Log;
@@ -23,26 +23,11 @@ public class ReconciliationStore {
         serializer = new ReconciliationJSONSerializer(appContext, FILENAME);
 
         try {
-//            reconciliations = serializer.loadReconciliations();
-
-            reconciliations = new ArrayList<>();
-            Reconciliation reconciliation1 = new Reconciliation("SPRINT 1");
-            reconciliations.add(reconciliation1);
-
-            Reconciliation reconciliation2 = new Reconciliation("SPRINT 1");
-            reconciliations.add(reconciliation2);
-
-            Reconciliation reconciliation3 = new Reconciliation("SPRINT 2");
-            Issue issue1 = new Issue("DEMO-12345", "IN PROGRESS", "TO DO");
-            Issue issue2 = new Issue("DEMO-54321", null, "TO DO");
-            reconciliation3.getIssues().add(issue1);
-            reconciliation3.getIssues().add(issue2);
-            reconciliations.add(reconciliation3);
+            reconciliations = serializer.loadReconciliations();
         } catch (Exception e) {
             reconciliations = new ArrayList<>();
             Log.e(TAG, "Error loading reconciliations: ", e);
         }
-
     }
 
     public static ReconciliationStore get(Context context) {

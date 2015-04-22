@@ -1,4 +1,4 @@
-package com.infusion.jirareconciler;
+package com.infusion.jirareconciler.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;
