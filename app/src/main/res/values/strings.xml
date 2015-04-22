@@ -17,4 +17,6 @@
     <string name="date">Date</string>
     <string name="issues">Issues</string>
     <string name="board_picker_title">Select board:</string>
+    <string name="no_lanes">Selected board has no lanes</string>
+    <string name="no_issues">Selected board has no issues</string>
 </resources>
