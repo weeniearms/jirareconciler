@@ -19,4 +19,8 @@
     <string name="board_picker_title">Select board:</string>
     <string name="no_lanes">Selected board has no lanes</string>
     <string name="no_issues">Selected board has no issues</string>
+    <string name="lane_captured">Lane captured</string>
+    <string name="next">Next</string>
+    <string name="retry">Retry</string>
+    <string name="found_issues">Found %d issues.</string>
 </resources>

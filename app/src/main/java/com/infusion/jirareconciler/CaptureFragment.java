@@ -1,7 +1,9 @@
 package com.infusion.jirareconciler;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Build;
@@ -180,23 +182,45 @@ public class CaptureFragment extends Fragment {
                                 null,
                                 new Camera.PictureCallback() {
                                     @Override
-                                    public void onPictureTaken(byte[] data, Camera camera) {
-                                        captureLane(data);
+                                    public void onPictureTaken(byte[] data, final Camera camera) {
+                                        int cropPercentage = cropLeft.getWidth() * 100 / surfaceView.getWidth();
+                                        final String[] issueIds = IssueIdDecoder.decode(data, cropPercentage);
 
                                         progressDialog.dismiss();
 
-                                        currentLane++;
+                                        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+                                        alertDialog.setTitle(R.string.lane_captured);
+                                        alertDialog.setMessage(getString(R.string.found_issues, issueIds.length));
+                                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.next),
+                                                new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.dismiss();
 
-                                        if (currentLane >= boardDetails.getLanes().length) {
-                                            Intent intent = new Intent();
-                                            intent.putExtra(EXTRA_RECONCILIATION, reconciler.reconcile());
-                                            getActivity().setResult(Activity.RESULT_OK, intent);
-                                            getActivity().finish();
-                                        }
-                                        else {
-                                            updateCurrentLane();
-                                            camera.startPreview();
-                                        }
+                                                        reconciler.addLane(boardDetails.getLanes()[currentLane], issueIds);
+
+                                                        currentLane++;
+
+                                                        if (currentLane >= boardDetails.getLanes().length) {
+                                                            Intent intent = new Intent();
+                                                            intent.putExtra(EXTRA_RECONCILIATION, reconciler.reconcile());
+                                                            getActivity().setResult(Activity.RESULT_OK, intent);
+                                                            getActivity().finish();
+                                                        }
+                                                        else {
+                                                            updateCurrentLane();
+                                                            camera.startPreview();
+                                                        }
+                                                    }
+                                                });
+                                        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.retry),
+                                                new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.dismiss();
+                                                        camera.startPreview();
+                                                    }
+                                                });
+                                        alertDialog.show();
                                     }
                                 }
                         );
@@ -206,15 +230,6 @@ public class CaptureFragment extends Fragment {
         });
 
         return view;
-    }
-
-    private void captureLane(byte[] data) {
-        int cropPercentage = cropLeft.getWidth() * 100 / surfaceView.getWidth();
-        String[] issueIds = IssueIdDecoder.decode(data, cropPercentage);
-
-        reconciler.addLane(boardDetails.getLanes()[currentLane], issueIds);
-
-        Toast.makeText(getActivity(), "Found: " + issueIds.length, Toast.LENGTH_LONG).show();
     }
 
     private void updateCropSize(int progress) {
