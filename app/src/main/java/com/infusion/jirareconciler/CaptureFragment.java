@@ -14,6 +14,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -186,7 +187,7 @@ public class CaptureFragment extends Fragment {
     }
 
     private void captureLane(byte[] data) {
-        int cropPercentage = (surfaceView.getWidth() - 2 * cropLeft.getWidth()) * 100 / surfaceView.getWidth();
+        int cropPercentage = cropLeft.getWidth() * 100 / surfaceView.getWidth();
         String[] issueIds = IssueIdDecoder.decode(data, cropPercentage);
 
         reconciler.addLane(boardDetails.getLanes()[currentLane], issueIds);

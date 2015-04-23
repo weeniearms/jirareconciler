@@ -26,19 +26,17 @@ public class IssueIdDecoder {
     }
 
     public static String[] decode(byte[] lane, int cropPercentage) {
-        BitmapFactory.Options opt = new BitmapFactory.Options();
-        Bitmap bitmap = BitmapFactory.decodeByteArray(lane, 0, lane.length, opt);
+        Bitmap bitmap = crop(lane, cropPercentage);
         try {
             Hashtable<DecodeHintType, Object> hints = new Hashtable<>();
             hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
             hints.put(DecodeHintType.POSSIBLE_FORMATS, "QR_CODE");
-            int height = bitmap.getHeight() * cropPercentage / 100;
-            int[] pixels = new int[bitmap.getWidth() * height];
-            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, (bitmap.getHeight() - height) / 2, bitmap.getWidth(), height);
+            int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
+            bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
 
             LuminanceSource source = new RGBLuminanceSource(
                     bitmap.getWidth(),
-                    height,
+                    bitmap.getHeight(),
                     pixels);
 
             QRCodeMultiReader multiReader = new QRCodeMultiReader();
@@ -58,6 +56,25 @@ public class IssueIdDecoder {
         }
         finally {
             bitmap.recycle();
+        }
+    }
+
+    private static Bitmap crop(byte[] lane, int cropPercentage) {
+        BitmapFactory.Options opt = new BitmapFactory.Options();
+        Bitmap bitmap = BitmapFactory.decodeByteArray(lane, 0, lane.length, opt);
+        Bitmap croppedBitmap = null;
+        try {
+            Hashtable<DecodeHintType, Object> hints = new Hashtable<>();
+            hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+            hints.put(DecodeHintType.POSSIBLE_FORMATS, "QR_CODE");
+            int height = bitmap.getHeight() - (bitmap.getHeight() * cropPercentage * 2 / 100);
+
+            return Bitmap.createBitmap(bitmap, 0, (bitmap.getHeight() - height) / 2, bitmap.getWidth(), height);
+        }
+        finally {
+            if (bitmap != croppedBitmap) {
+                bitmap.recycle();
+            }
         }
     }
 }
