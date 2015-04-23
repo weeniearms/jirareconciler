@@ -36,7 +36,7 @@ import java.util.UUID;
 public class ReconciliationFragment extends Fragment {
     public static final String EXTRA_RECONCILIATION_ID = "com.infusion.jirareconciler.reconciliation_id";
     private Reconciliation reconciliation;
-    private TextView sprintTextView;
+    private TextView boardTextView;
     private TextView dateTextView;
     private ListView issuesListView;
     private JiraHelper jiraHelper;
@@ -91,8 +91,8 @@ public class ReconciliationFragment extends Fragment {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        sprintTextView = (TextView) view.findViewById(R.id.reconciliation_sprint_text_view);
-        sprintTextView.setText(reconciliation.getBoard());
+        boardTextView = (TextView) view.findViewById(R.id.reconciliation_sprint_text_view);
+        boardTextView.setText(reconciliation.getBoard());
 
         dateTextView = (TextView) view.findViewById(R.id.reconciliation_date_text_view);
         dateTextView.setText(reconciliation.getDate().toString());
