@@ -45,6 +45,7 @@ public class CaptureFragment extends Fragment {
     private BoardDetails boardDetails;
     private View cameraTrigger;
     private Reconciler reconciler;
+    private View cameraFocusTrigger;
 
     public static CaptureFragment newInstance(Board board, BoardDetails boardDetails) {
         Bundle args = new Bundle();
@@ -142,6 +143,18 @@ public class CaptureFragment extends Fragment {
             }
         });
 
+        cameraFocusTrigger = view.findViewById(R.id.lane_camera_focus_trigger);
+        cameraFocusTrigger.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (camera == null) {
+                    return;
+                }
+
+                camera.autoFocus(null);
+            }
+        });
+
         cameraTrigger = view.findViewById(R.id.lane_camera_trigger);
         cameraTrigger.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,36 +163,45 @@ public class CaptureFragment extends Fragment {
                     return;
                 }
 
-                camera.takePicture(
-                        new Camera.ShutterCallback() {
-                            @Override
-                            public void onShutter() {
-                                progressDialog.show();
-                            }
-                        },
-                        null,
-                        new Camera.PictureCallback() {
-                            @Override
-                            public void onPictureTaken(byte[] data, Camera camera) {
-                                captureLane(data);
-
-                                progressDialog.dismiss();
-
-                                currentLane++;
-
-                                if (currentLane >= boardDetails.getLanes().length) {
-                                    Intent intent = new Intent();
-                                    intent.putExtra(EXTRA_RECONCILIATION, reconciler.reconcile());
-                                    getActivity().setResult(Activity.RESULT_OK, intent);
-                                    getActivity().finish();
-                                }
-                                else {
-                                    updateCurrentLane();
-                                    camera.startPreview();
-                                }
-                            }
+                camera.autoFocus(new Camera.AutoFocusCallback() {
+                    @Override
+                    public void onAutoFocus(boolean success, Camera camera) {
+                        if (!success) {
+                            return;
                         }
-                );
+
+                        camera.takePicture(
+                                new Camera.ShutterCallback() {
+                                    @Override
+                                    public void onShutter() {
+                                        progressDialog.show();
+                                    }
+                                },
+                                null,
+                                new Camera.PictureCallback() {
+                                    @Override
+                                    public void onPictureTaken(byte[] data, Camera camera) {
+                                        captureLane(data);
+
+                                        progressDialog.dismiss();
+
+                                        currentLane++;
+
+                                        if (currentLane >= boardDetails.getLanes().length) {
+                                            Intent intent = new Intent();
+                                            intent.putExtra(EXTRA_RECONCILIATION, reconciler.reconcile());
+                                            getActivity().setResult(Activity.RESULT_OK, intent);
+                                            getActivity().finish();
+                                        }
+                                        else {
+                                            updateCurrentLane();
+                                            camera.startPreview();
+                                        }
+                                    }
+                                }
+                        );
+                    }
+                });
             }
         });
 

@@ -22,7 +22,7 @@ public class IssueIdDecoder {
     private static final String TAG = "IssueIdDecoder";
 
     public static String[] decode(byte[] lane) {
-        return decode(lane, 100);
+        return decode(lane, 0);
     }
 
     public static String[] decode(byte[] lane, int cropPercentage) {
@@ -69,7 +69,7 @@ public class IssueIdDecoder {
             hints.put(DecodeHintType.POSSIBLE_FORMATS, "QR_CODE");
             int height = bitmap.getHeight() - (bitmap.getHeight() * cropPercentage * 2 / 100);
 
-            return Bitmap.createBitmap(bitmap, 0, (bitmap.getHeight() - height) / 2, bitmap.getWidth(), height);
+            return croppedBitmap = Bitmap.createBitmap(bitmap, 0, (bitmap.getHeight() - height) / 2, bitmap.getWidth(), height);
         }
         finally {
             if (bitmap != croppedBitmap) {
