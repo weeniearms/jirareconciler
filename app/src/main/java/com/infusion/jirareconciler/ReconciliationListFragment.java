@@ -3,6 +3,7 @@ package com.infusion.jirareconciler;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -26,7 +27,6 @@ import com.infusion.jirareconciler.model.Reconciliation;
 import com.infusion.jirareconciler.model.ReconciliationStore;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by rcieslak on 20/04/2015.
@@ -37,7 +37,7 @@ public class ReconciliationListFragment extends ListFragment {
     private static final String DIALOG_BOARD = "board";
     private List<Reconciliation> reconciliations;
     private ProgressDialog progressDialog;
-    private JiraHelper boardFetcher;
+    private JiraHelper jiraHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +51,7 @@ public class ReconciliationListFragment extends ListFragment {
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setCancelable(false);
 
-        boardFetcher = new JiraHelper(getActivity());
+        jiraHelper = new JiraHelper(getActivity());
     }
 
     private void updateReconciliations() {
@@ -108,7 +108,8 @@ public class ReconciliationListFragment extends ListFragment {
             case IntentIntegrator.REQUEST_CODE:
                 IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
                 if (scanResult != null) {
-                    Toast.makeText(getActivity(), scanResult.getContents(), Toast.LENGTH_LONG).show();
+                    Intent browseIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(jiraHelper.getIssueUrl(scanResult.getContents())));
+                    startActivity(browseIntent);
                 }
                 break;
             case REQUEST_BOARD:
@@ -156,7 +157,7 @@ public class ReconciliationListFragment extends ListFragment {
     private class FetchBoardsTask extends AsyncTask<Void, Void, Board[]> {
         @Override
         protected Board[] doInBackground(Void... params) {
-            List<Board> boards = boardFetcher.fetchBoards();
+            List<Board> boards = jiraHelper.fetchBoards();
             return boards.toArray(new Board[boards.size()]);
         }
 
@@ -182,7 +183,7 @@ public class ReconciliationListFragment extends ListFragment {
         @Override
         protected BoardDetails doInBackground(Board... params) {
             board = params[0];
-            return boardFetcher.fetchBoardDetails(board.getId());
+            return jiraHelper.fetchBoardDetails(board.getId());
         }
 
         @Override

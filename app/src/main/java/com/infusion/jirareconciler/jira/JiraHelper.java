@@ -37,6 +37,7 @@ public class JiraHelper {
     private static final String TAG = "BoardFetcher";
     private static final String PATH_BOARD_LIST = "rest/greenhopper/1.0/rapidviews/list";
     private static final String PATH_BOARD_DETAILS = "rest/greenhopper/1.0/xboard/work/allData.json";
+    private static final String PATH_BROWSE_ISSUE = "browse";
     private static final String PARAM_BOARD_ID = "rapidViewId";
     private static final String JSON_VIEWS = "views";
     private final Context context;
@@ -86,6 +87,17 @@ public class JiraHelper {
             Log.e(TAG, "Failed to fetch board details", e);
             return null;
         }
+    }
+
+    public String getIssueUrl(String issueId) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String url = Uri.parse(preferences.getString(SettingsFragment.PREF_JIRA_URL, null))
+                .buildUpon()
+                .appendEncodedPath(PATH_BROWSE_ISSUE)
+                .appendEncodedPath(issueId)
+                .build()
+                .toString();
+        return url;
     }
 
     private byte[] getUrlBytes(String urlSpec) throws IOException {
