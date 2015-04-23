@@ -37,7 +37,7 @@ public class Reconciler implements Serializable {
             String jiraLane = boardDetails.getLane(issueId);
             String currentLane = issueToLaneMap.get(issueId);
             if (!jiraLane.equals(currentLane)) {
-                Issue issue = new Issue(issueId, currentLane, jiraLane);
+                Issue issue = new Issue(issueId, boardDetails.getTitle(issueId), currentLane, jiraLane);
                 reconciliation.getIssues().add(issue);
             }
         }

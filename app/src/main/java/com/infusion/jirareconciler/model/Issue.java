@@ -12,18 +12,22 @@ public class Issue implements Serializable {
     private static final String JSON_ID = "id";
     private static final String JSON_BOARD_STATE = "board_state";
     private static final String JSON_JIRA_STATE = "jira_state";
+    private static final String JSON_TITLE = "title";
     private final String id;
     private final String boardState;
     private final String jiraState;
+    private final String title;
 
-    public Issue(String id, String boardState, String jiraState) {
+    public Issue(String id, String title, String boardState, String jiraState) {
         this.id = id;
+        this.title = title;
         this.boardState = boardState;
         this.jiraState = jiraState;
     }
 
     public Issue(JSONObject json) throws JSONException {
         id = json.getString(JSON_ID);
+        title = json.optString(JSON_TITLE);
         boardState = json.optString(JSON_BOARD_STATE);
         jiraState = json.getString(JSON_JIRA_STATE);
     }
@@ -32,6 +36,7 @@ public class Issue implements Serializable {
         JSONObject json = new JSONObject();
 
         json.put(JSON_ID, id);
+        json.put(JSON_TITLE, title);
         json.put(JSON_BOARD_STATE, boardState);
         json.put(JSON_JIRA_STATE, jiraState);
 
@@ -40,6 +45,10 @@ public class Issue implements Serializable {
 
     public String getId() {
         return id;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public String getBoardState() {

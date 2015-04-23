@@ -22,10 +22,12 @@ public class BoardDetails implements Serializable {
     private static final String JSON_ISSUES = "issues";
     private static final String JSON_ISSUE_ID = "key";
     private static final String JSON_ISSUE_STATUS_ID = "statusId";
+    private static final String JSON_ISSUE_TITLE = "summary";
     private final List<String> issues = new ArrayList<>();
     private final List<String> lanes = new ArrayList<>();
     private final Map<String, String> issueToLaneMap = new HashMap<>();
     private final Map<String, List<String>> laneToIssuesMap = new HashMap<>();
+    private final Map<String, String> issueToTitleMap = new HashMap<>();
 
     public BoardDetails(JSONObject json) throws JSONException {
         Map<String, String> statusToLaneMap = new HashMap<>();
@@ -52,6 +54,7 @@ public class BoardDetails implements Serializable {
             String id = issue.getString(JSON_ISSUE_ID);
             String statusId = issue.getString(JSON_ISSUE_STATUS_ID);
             this.issues.add(id);
+            issueToTitleMap.put(id, issue.optString(JSON_ISSUE_TITLE));
 
             String lane = statusToLaneMap.get(statusId);
             if (lane != null) {
@@ -72,6 +75,10 @@ public class BoardDetails implements Serializable {
 
     public String getLane(String issueId) {
         return issueToLaneMap.get(issueId);
+    }
+
+    public String getTitle(String issueId) {
+        return issueToTitleMap.get(issueId);
     }
 
     public String[] getLanes() {

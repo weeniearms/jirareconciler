@@ -25,6 +25,8 @@ import com.infusion.jirareconciler.model.Issue;
 import com.infusion.jirareconciler.model.Reconciliation;
 import com.infusion.jirareconciler.model.ReconciliationStore;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,6 +62,24 @@ public class ReconciliationFragment extends Fragment {
 
         UUID reconciliationId = (UUID) getArguments().getSerializable(EXTRA_RECONCILIATION_ID);
         reconciliation = ReconciliationStore.get(getActivity()).getReconciliation(reconciliationId);
+        Collections.sort(reconciliation.getIssues(), new Comparator<Issue>() {
+            @Override
+            public int compare(Issue lhs, Issue rhs) {
+                if (lhs.getBoardState() == null && rhs.getBoardState() == null) {
+                    return 0;
+                }
+
+                if (lhs.getBoardState() == null) {
+                    return -1;
+                }
+
+                if (rhs.getBoardState() == null) {
+                    return 1;
+                }
+
+                return lhs.getBoardState().compareTo(rhs.getBoardState());
+            }
+        });
     }
 
     @Override
@@ -116,11 +136,12 @@ public class ReconciliationFragment extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            Issue issue = reconciliation.getIssues().get(position);
+            Issue previousIssue = position == 0 ? null : reconciliation.getIssues().get(position - 1);
+
             if (convertView == null) {
                 convertView = getActivity().getLayoutInflater().inflate(R.layout.list_item_issue, null);
             }
-
-            Issue issue = reconciliation.getIssues().get(position);
 
             TextView idTextView = (TextView) convertView.findViewById(R.id.issue_list_item_id);
             idTextView.setText(issue.getId());
@@ -128,8 +149,21 @@ public class ReconciliationFragment extends Fragment {
             TextView boardStateTextView = (TextView) convertView.findViewById(R.id.issue_list_item_board_state);
             boardStateTextView.setText(issue.getBoardState());
 
+            TextView titleTextView = (TextView) convertView.findViewById(R.id.issue_list_item_title);
+            titleTextView.setText(issue.getTitle());
+
             TextView jiraStateTextView = (TextView) convertView.findViewById(R.id.issue_list_item_jira_state);
             jiraStateTextView.setText(issue.getJiraState());
+
+            if (position == 0 ||
+                    (issue.getBoardState() != previousIssue.getBoardState()) &&
+                            (issue.getBoardState() != null && !issue.getBoardState().equals(previousIssue.getBoardState()) ||
+                                    previousIssue.getBoardState() != null && !previousIssue.getBoardState().equals(issue.getBoardState()))) {
+                boardStateTextView.setVisibility(View.VISIBLE);
+            }
+            else {
+                boardStateTextView.setVisibility(View.GONE);
+            }
 
             return convertView;
         }

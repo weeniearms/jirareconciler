@@ -1,35 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="4dp">
-
-    <TextView
-        android:id="@+id/issue_list_item_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:text="Reconciliation sprint"
-        android:textStyle="bold" />
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/issue_list_item_board_state"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:padding="4dp"
         android:text="TO DO"
-        android:textColor="@color/holo_red_dark" />
+        android:background="@android:color/darker_gray" />
 
-    <TextView
-        android:id="@+id/issue_list_item_jira_state"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/issue_list_item_board_state"
-        android:paddingTop="4dp"
-        android:text="IN PROGRESS"
-        android:textColor="@color/holo_blue_dark" />
+        android:orientation="vertical"
+        android:padding="4dp">
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/issue_list_item_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="ISSUE-123"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/issue_list_item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/issue_list_item_id"
+            android:paddingTop="4dp"
+            android:text="Test issue title" />
+
+        <TextView
+            android:id="@+id/issue_list_item_jira_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="IN PROGRESS"
+            android:textColor="@color/holo_red_dark" />
+
+    </RelativeLayout>
+</LinearLayout>
