@@ -1,5 +1,6 @@
 package com.infusion.jirareconciler;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,9 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -50,6 +54,7 @@ public class ReconciliationFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         setRetainInstance(true);
+        setHasOptionsMenu(true);
 
         jiraHelper = new JiraHelper(getActivity());
 
@@ -84,6 +89,24 @@ public class ReconciliationFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_reconciliation, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_item_delete_item) {
+            ReconciliationStore reconciliationStore = ReconciliationStore.get(getActivity());
+            reconciliationStore.deleteReconciliation(reconciliation);
+            reconciliationStore.saveReconciliations();
+            getActivity().setResult(Activity.RESULT_OK);
+            getActivity().finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private class IssueAdapter extends ArrayAdapter<Issue> {

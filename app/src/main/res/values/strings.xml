@@ -23,4 +23,5 @@
     <string name="next">Next</string>
     <string name="retry">Retry</string>
     <string name="found_issues">Found %d issues.</string>
+    <string name="delete">Delete</string>
 </resources>
