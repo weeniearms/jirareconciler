@@ -3,10 +3,12 @@ package com.infusion.jirareconciler.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by rcieslak on 21/04/2015.
  */
-public class Issue {
+public class Issue implements Serializable {
     private static final String JSON_ID = "id";
     private static final String JSON_BOARD_STATE = "board_state";
     private static final String JSON_JIRA_STATE = "jira_state";
