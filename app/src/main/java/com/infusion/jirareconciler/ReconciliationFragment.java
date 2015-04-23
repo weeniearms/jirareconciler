@@ -1,5 +1,7 @@
 package com.infusion.jirareconciler;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,10 +11,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.infusion.jirareconciler.jira.JiraHelper;
 import com.infusion.jirareconciler.model.Issue;
 import com.infusion.jirareconciler.model.Reconciliation;
 import com.infusion.jirareconciler.model.ReconciliationStore;
@@ -29,6 +33,7 @@ public class ReconciliationFragment extends Fragment {
     private TextView sprintTextView;
     private TextView dateTextView;
     private ListView issuesListView;
+    private JiraHelper jiraHelper;
 
     public static ReconciliationFragment newInstance(UUID id) {
         Bundle args = new Bundle();
@@ -45,6 +50,8 @@ public class ReconciliationFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         setRetainInstance(true);
+
+        jiraHelper = new JiraHelper(getActivity());
 
         UUID reconciliationId = (UUID) getArguments().getSerializable(EXTRA_RECONCILIATION_ID);
         reconciliation = ReconciliationStore.get(getActivity()).getReconciliation(reconciliationId);
@@ -67,6 +74,14 @@ public class ReconciliationFragment extends Fragment {
 
         issuesListView = (ListView) view.findViewById(R.id.reconciliation_issues_list_view);
         issuesListView.setAdapter(new IssueAdapter(reconciliation.getIssues()));
+        issuesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Issue issue = (Issue) issuesListView.getAdapter().getItem(position);
+                Intent browseIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(jiraHelper.getIssueUrl(issue.getId())));
+                startActivity(browseIntent);
+            }
+        });
 
         return view;
     }

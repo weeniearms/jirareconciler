@@ -9,25 +9,27 @@
         android:id="@+id/issue_list_item_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:text="Reconciliation sprint" />
+        android:text="Reconciliation sprint"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/issue_list_item_board_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:text="TO DO"/>
+        android:text="TO DO"
+        android:textColor="@color/holo_red_dark" />
 
     <TextView
         android:id="@+id/issue_list_item_jira_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="4dp"
-        android:layout_below="@+id/issue_list_item_board_state"
         android:layout_alignParentRight="true"
-        android:text="IN PROGRESS"/>
+        android:layout_below="@+id/issue_list_item_board_state"
+        android:paddingTop="4dp"
+        android:text="IN PROGRESS"
+        android:textColor="@color/holo_blue_dark" />
 
 </RelativeLayout>
