@@ -32,6 +32,7 @@ import java.util.UUID;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnItemClick;
 
 /**
  * Created by rcieslak on 21/04/2015.
@@ -100,14 +101,6 @@ public class ReconciliationFragment extends Fragment {
         dateTextView.setText(reconciliation.getDate().toString());
 
         issuesListView.setAdapter(new IssueAdapter(reconciliation.getIssues()));
-        issuesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Issue issue = (Issue) issuesListView.getAdapter().getItem(position);
-                Intent browseIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(jiraHelper.getIssueUrl(issue.getId())));
-                startActivity(browseIntent);
-            }
-        });
 
         return view;
     }
@@ -134,6 +127,13 @@ public class ReconciliationFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @OnItemClick(R.id.reconciliation_issues_list_view)
+    public void navigateToIssue(int position) {
+        Issue issue = (Issue) issuesListView.getAdapter().getItem(position);
+        Intent browseIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(jiraHelper.getIssueUrl(issue.getId())));
+        startActivity(browseIntent);
     }
 
     private class IssueAdapter extends ArrayAdapter<Issue> {

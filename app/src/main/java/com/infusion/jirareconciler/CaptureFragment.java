@@ -29,6 +29,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * Created by rcieslak on 21/04/2015.
@@ -145,89 +146,6 @@ public class CaptureFragment extends Fragment {
             }
         });
 
-        cameraFocusTrigger.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (camera == null) {
-                    return;
-                }
-
-                camera.autoFocus(null);
-            }
-        });
-
-        cameraTrigger.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (camera == null) {
-                    return;
-                }
-
-                camera.autoFocus(new Camera.AutoFocusCallback() {
-                    @Override
-                    public void onAutoFocus(boolean success, Camera camera) {
-                        if (!success) {
-                            return;
-                        }
-
-                        camera.takePicture(
-                                new Camera.ShutterCallback() {
-                                    @Override
-                                    public void onShutter() {
-                                        progressDialog.setMessage(getString(R.string.analyzing_lane));
-                                        progressDialog.show();
-                                    }
-                                },
-                                null,
-                                new Camera.PictureCallback() {
-                                    @Override
-                                    public void onPictureTaken(byte[] data, final Camera camera) {
-                                        int cropPercentage = cropLeft.getWidth() * 100 / surfaceView.getWidth();
-                                        final String[] issueIds = IssueIdDecoder.decode(data, cropPercentage);
-
-                                        progressDialog.dismiss();
-
-                                        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-                                        alertDialog.setTitle(R.string.lane_captured);
-                                        alertDialog.setMessage(getString(R.string.found_issues, issueIds.length));
-                                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.next),
-                                                new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.dismiss();
-
-                                                        reconciler.addLane(boardDetails.getLanes()[currentLane], issueIds);
-
-                                                        currentLane++;
-
-                                                        if (currentLane >= boardDetails.getLanes().length) {
-                                                            Intent intent = new Intent();
-                                                            intent.putExtra(EXTRA_RECONCILIATION, reconciler.reconcile());
-                                                            getActivity().setResult(Activity.RESULT_OK, intent);
-                                                            getActivity().finish();
-                                                        }
-                                                        else {
-                                                            updateCurrentLane();
-                                                            camera.startPreview();
-                                                        }
-                                                    }
-                                                });
-                                        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.retry),
-                                                new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.dismiss();
-                                                        camera.startPreview();
-                                                    }
-                                                });
-                                        alertDialog.show();
-                                    }
-                                }
-                        );
-                    }
-                });
-            }
-        });
-
         return view;
     }
 
@@ -253,6 +171,85 @@ public class CaptureFragment extends Fragment {
             camera.release();
             camera = null;
         }
+    }
+
+    @OnClick(R.id.lane_camera_focus_trigger)
+    public void autoFocus() {
+        if (camera == null) {
+            return;
+        }
+
+        camera.autoFocus(null);
+    }
+
+    @OnClick(R.id.lane_camera_trigger)
+    public void capture() {
+        if (camera == null) {
+            return;
+        }
+
+        camera.autoFocus(new Camera.AutoFocusCallback() {
+            @Override
+            public void onAutoFocus(boolean success, Camera camera) {
+                if (!success) {
+                    return;
+                }
+
+                camera.takePicture(
+                        new Camera.ShutterCallback() {
+                            @Override
+                            public void onShutter() {
+                                progressDialog.setMessage(getString(R.string.analyzing_lane));
+                                progressDialog.show();
+                            }
+                        },
+                        null,
+                        new Camera.PictureCallback() {
+                            @Override
+                            public void onPictureTaken(byte[] data, final Camera camera) {
+                                int cropPercentage = cropLeft.getWidth() * 100 / surfaceView.getWidth();
+                                final String[] issueIds = IssueIdDecoder.decode(data, cropPercentage);
+
+                                progressDialog.dismiss();
+
+                                AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+                                alertDialog.setTitle(R.string.lane_captured);
+                                alertDialog.setMessage(getString(R.string.found_issues, issueIds.length));
+                                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.next),
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+
+                                                reconciler.addLane(boardDetails.getLanes()[currentLane], issueIds);
+
+                                                currentLane++;
+
+                                                if (currentLane >= boardDetails.getLanes().length) {
+                                                    Intent intent = new Intent();
+                                                    intent.putExtra(EXTRA_RECONCILIATION, reconciler.reconcile());
+                                                    getActivity().setResult(Activity.RESULT_OK, intent);
+                                                    getActivity().finish();
+                                                }
+                                                else {
+                                                    updateCurrentLane();
+                                                    camera.startPreview();
+                                                }
+                                            }
+                                        });
+                                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.retry),
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                                camera.startPreview();
+                                            }
+                                        });
+                                alertDialog.show();
+                            }
+                        }
+                );
+            }
+        });
     }
 
     private void updateCropSize(int progress) {
