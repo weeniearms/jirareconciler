@@ -25,4 +25,7 @@
     <string name="found_issues">Found %d issues.</string>
     <string name="delete">Delete</string>
     <string name="jira_status">JIRA Status:</string>
+    <string name="loading_boards">Loading boards</string>
+    <string name="loading_board_details">Loading board details</string>
+    <string name="analyzing_lane">Analyzing captured lane</string>
 </resources>

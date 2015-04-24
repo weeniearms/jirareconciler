@@ -220,6 +220,7 @@ public class ReconciliationListFragment extends ListFragment {
 
         @Override
         protected void onPreExecute() {
+            progressDialog.setMessage(getString(R.string.loading_boards));
             progressDialog.show();
         }
 
@@ -245,6 +246,7 @@ public class ReconciliationListFragment extends ListFragment {
 
         @Override
         protected void onPreExecute() {
+            progressDialog.setMessage(getString(R.string.loading_board_details));
             progressDialog.show();
         }
 

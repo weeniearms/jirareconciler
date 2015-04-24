@@ -175,6 +175,7 @@ public class CaptureFragment extends Fragment {
                                 new Camera.ShutterCallback() {
                                     @Override
                                     public void onShutter() {
+                                        progressDialog.setMessage(getString(R.string.analyzing_lane));
                                         progressDialog.show();
                                     }
                                 },
