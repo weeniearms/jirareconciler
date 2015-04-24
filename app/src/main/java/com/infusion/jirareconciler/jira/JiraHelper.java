@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Base64;
-import android.util.Log;
 
 import com.infusion.jirareconciler.SettingsFragment;
 
@@ -13,6 +12,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,7 +35,7 @@ import javax.net.ssl.X509TrustManager;
  * Created by rcieslak on 21/04/2015.
  */
 public class JiraHelper {
-    private static final String TAG = "BoardFetcher";
+    private static final Logger LOG = LoggerFactory.getLogger(JiraHelper.class);
     private static final String PATH_BOARD_LIST = "rest/greenhopper/1.0/rapidviews/list";
     private static final String PATH_BOARD_DETAILS = "rest/greenhopper/1.0/xboard/work/allData.json";
     private static final String PATH_BROWSE_ISSUE = "browse";
@@ -64,7 +65,7 @@ public class JiraHelper {
                 boards.add(new Board(array.getJSONObject(i)));
             }
         } catch (IOException | JSONException e) {
-            Log.e(TAG, "Failed to fetch boards", e);
+            LOG.error("Failed to fetch boards", e);
         }
 
         return boards;
@@ -84,7 +85,7 @@ public class JiraHelper {
             JSONObject json = (JSONObject) new JSONTokener(jsonString).nextValue();
             return new BoardDetails(json);
         } catch (IOException | JSONException e) {
-            Log.e(TAG, "Failed to fetch board details", e);
+            LOG.error("Failed to fetch board details", e);
             return null;
         }
     }
@@ -114,7 +115,7 @@ public class JiraHelper {
             InputStream inputStream = connection.getInputStream();
 
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                Log.w(TAG, "The service returned " + connection.getResponseCode());
+                LOG.warn("The service returned " + connection.getResponseCode());
                 return null;
             }
 
@@ -152,7 +153,7 @@ public class JiraHelper {
             connection.setHostnameVerifier(allHostsValid);
         }
         catch (Exception e) {
-            Log.w(TAG, "Failed to setup accept all certs and hostnames verifier", e);
+            LOG.warn("Failed to setup accept all certs and hostnames verifier", e);
         }
     }
 

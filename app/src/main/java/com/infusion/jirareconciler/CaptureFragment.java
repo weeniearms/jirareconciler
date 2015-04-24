@@ -10,20 +10,20 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 import com.infusion.jirareconciler.jira.Board;
 import com.infusion.jirareconciler.jira.BoardDetails;
 import com.infusion.jirareconciler.reconciliation.IssueIdDecoder;
 import com.infusion.jirareconciler.reconciliation.Reconciler;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,7 +32,7 @@ import java.util.List;
  * Created by rcieslak on 21/04/2015.
  */
 public class CaptureFragment extends Fragment {
-    private static final String TAG = "CaptureFragment";
+    private static final Logger LOG = LoggerFactory.getLogger(CaptureFragment.class);
     public static final String EXTRA_BOARD_DETAILS = "com.infusion.jirareconciler.board_details";
     public static final String EXTRA_BOARD = "com.infusion.jirareconciler.board";
     public static final String EXTRA_RECONCILIATION = "com.infusion.jirareconciler.reconciliation";
@@ -111,7 +111,7 @@ public class CaptureFragment extends Fragment {
                         camera.setPreviewDisplay(holder);
                     }
                 } catch (IOException e) {
-                    Log.e(TAG, "Error setting up preview display", e);
+                    LOG.error("Error setting up preview display", e);
                 }
             }
 
@@ -131,7 +131,7 @@ public class CaptureFragment extends Fragment {
                     camera.startPreview();
                 }
                 catch (Exception e) {
-                    Log.e(TAG, "Could not start preview", e);
+                    LOG.error("Could not start preview", e);
                     camera.release();
                     camera = null;
                 }

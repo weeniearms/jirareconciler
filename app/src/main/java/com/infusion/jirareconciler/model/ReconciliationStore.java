@@ -1,7 +1,9 @@
 package com.infusion.jirareconciler.model;
 
 import android.content.Context;
-import android.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.UUID;
  * Created by rcieslak on 21/04/2015.
  */
 public class ReconciliationStore {
-    private static final String TAG = "ReconciliationStore";
+    private static final Logger LOG = LoggerFactory.getLogger(ReconciliationStore.class);
     private static final String FILENAME = "reconciliations.json";
     private static ReconciliationStore reconciliationStore;
     private final ReconciliationJSONSerializer serializer;
@@ -26,7 +28,7 @@ public class ReconciliationStore {
             reconciliations = serializer.loadReconciliations();
         } catch (Exception e) {
             reconciliations = new ArrayList<>();
-            Log.e(TAG, "Error loading reconciliations: ", e);
+            LOG.error("Error loading reconciliations", e);
         }
     }
 
@@ -63,11 +65,11 @@ public class ReconciliationStore {
     public boolean saveReconciliations() {
         try {
             serializer.saveReconciliations(reconciliations);
-            Log.d(TAG, "Reconciliations saved to file");
+            LOG.debug("Reconciliations saved to file");
             return true;
         }
         catch (Exception e) {
-            Log.e(TAG, "Error saving reconciliations: ", e);
+            LOG.error("Error saving reconciliations", e);
             return false;
         }
     }

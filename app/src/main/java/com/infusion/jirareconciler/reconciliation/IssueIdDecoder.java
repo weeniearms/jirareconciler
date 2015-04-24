@@ -2,7 +2,6 @@ package com.infusion.jirareconciler.reconciliation;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
@@ -13,13 +12,16 @@ import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.multi.qrcode.QRCodeMultiReader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Hashtable;
 
 /**
  * Created by rcieslak on 22/04/2015.
  */
 public class IssueIdDecoder {
-    private static final String TAG = "IssueIdDecoder";
+    private static final Logger LOG = LoggerFactory.getLogger(IssueIdDecoder.class);
 
     public static String[] decode(byte[] lane) {
         return decode(lane, 0);
@@ -46,12 +48,12 @@ public class IssueIdDecoder {
             for (int i = 0; i < results.length; i++) {
                 issueIds[i] = results[i].getText();
             }
-            Log.d(TAG, "Found: " + results.length);
+            LOG.debug("Found {} codes", results.length);
 
             return issueIds;
         }
         catch (NotFoundException e) {
-            Log.d(TAG, "No codes found");
+            LOG.debug("No codes found");
             return new String[0];
         }
         finally {

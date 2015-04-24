@@ -1,13 +1,12 @@
 package com.infusion.jirareconciler.model;
 
 import android.content.Context;
-import android.util.Log;
-
-import com.infusion.jirareconciler.model.Reconciliation;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONTokener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -24,7 +23,7 @@ import java.util.List;
  * Created by rcieslak on 21/04/2015.
  */
 public class ReconciliationJSONSerializer {
-    private static final String TAG = "RecJSONSerializer";
+    private static final Logger LOG = LoggerFactory.getLogger(ReconciliationJSONSerializer.class);
     private final Context context;
     private final String fileName;
 
@@ -73,7 +72,7 @@ public class ReconciliationJSONSerializer {
             }
         }
         catch (FileNotFoundException e) {
-            Log.d(TAG, "Reconciliations file not found: ", e);
+            LOG.debug("Reconciliations file not found", e);
         }
         finally {
             if (reader != null) {
