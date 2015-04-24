@@ -15,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -42,7 +41,7 @@ public class ReconciliationFragment extends Fragment {
     private Reconciliation reconciliation;
     private JiraHelper jiraHelper;
 
-    @InjectView(R.id.reconciliation_sprint_text_view) TextView boardTextView;
+    @InjectView(R.id.reconciliation_board_text_view) TextView boardTextView;
     @InjectView(R.id.reconciliation_date_text_view) TextView dateTextView;
     @InjectView(R.id.reconciliation_issues_list_view) ListView issuesListView;
 
@@ -136,7 +135,7 @@ public class ReconciliationFragment extends Fragment {
         startActivity(browseIntent);
     }
 
-    private class IssueAdapter extends ArrayAdapter<Issue> {
+    class IssueAdapter extends ArrayAdapter<Issue> {
         public IssueAdapter(List<Issue> issues) {
             super(getActivity(), 0, issues);
         }
@@ -145,34 +144,40 @@ public class ReconciliationFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             Issue issue = reconciliation.getIssues().get(position);
             Issue previousIssue = position == 0 ? null : reconciliation.getIssues().get(position - 1);
+            boolean isGroupStart = position == 0 ||
+                    (issue.getBoardState() != previousIssue.getBoardState()) &&
+                            (issue.getBoardState() != null && !issue.getBoardState().equals(previousIssue.getBoardState()) ||
+                                    previousIssue.getBoardState() != null && !previousIssue.getBoardState().equals(issue.getBoardState()));
 
             if (convertView == null) {
                 convertView = getActivity().getLayoutInflater().inflate(R.layout.list_item_issue, null);
+                convertView.setTag(new ViewHolder(convertView));
             }
 
-            TextView idTextView = (TextView) convertView.findViewById(R.id.issue_list_item_id);
-            idTextView.setText(issue.getId());
-
-            TextView boardStateTextView = (TextView) convertView.findViewById(R.id.issue_list_item_board_state);
-            boardStateTextView.setText(issue.getBoardState());
-
-            TextView titleTextView = (TextView) convertView.findViewById(R.id.issue_list_item_title);
-            titleTextView.setText(issue.getTitle());
-
-            TextView jiraStateTextView = (TextView) convertView.findViewById(R.id.issue_list_item_jira_state);
-            jiraStateTextView.setText(issue.getJiraState());
-
-            if (position == 0 ||
-                    (issue.getBoardState() != previousIssue.getBoardState()) &&
-                            (issue.getBoardState() != null && !issue.getBoardState().equals(previousIssue.getBoardState()) ||
-                                    previousIssue.getBoardState() != null && !previousIssue.getBoardState().equals(issue.getBoardState()))) {
-                boardStateTextView.setVisibility(View.VISIBLE);
-            }
-            else {
-                boardStateTextView.setVisibility(View.GONE);
-            }
+            ViewHolder holder = (ViewHolder) convertView.getTag();
+            holder.setIssue(issue, isGroupStart);
 
             return convertView;
+        }
+
+        class ViewHolder {
+            @InjectView(R.id.issue_list_item_id) TextView issueIdTextView;
+            @InjectView(R.id.issue_list_item_title) TextView titleTextView;
+            @InjectView(R.id.issue_list_item_board_state) TextView boardStateTextView;
+            @InjectView(R.id.issue_list_item_jira_state) TextView jiraStateTextView;
+
+            public ViewHolder(View view) {
+                ButterKnife.inject(this, view);
+            }
+
+            public void setIssue(Issue issue, boolean isGroupStart) {
+                issueIdTextView.setText(issue.getId());
+                titleTextView.setText(issue.getTitle());
+                boardStateTextView.setText(issue.getBoardState());
+                jiraStateTextView.setText(issue.getJiraState());
+
+                boardStateTextView.setVisibility(isGroupStart ? View.VISIBLE : View.GONE);
+            }
         }
     }
 }

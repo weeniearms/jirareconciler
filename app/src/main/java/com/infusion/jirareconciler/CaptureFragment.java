@@ -50,8 +50,6 @@ public class CaptureFragment extends Fragment {
     @InjectView(R.id.crop_left) View cropLeft;
     @InjectView(R.id.crop_right) View cropRight;
     @InjectView(R.id.crop_size_bar) SeekBar cropSizeBar;
-    @InjectView(R.id.lane_camera_trigger) View cameraTrigger;
-    @InjectView(R.id.lane_camera_focus_trigger) View cameraFocusTrigger;
 
     public static CaptureFragment newInstance(Board board, BoardDetails boardDetails) {
         Bundle args = new Bundle();

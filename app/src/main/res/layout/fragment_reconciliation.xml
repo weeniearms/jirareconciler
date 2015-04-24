@@ -8,10 +8,10 @@
         style="?android:listSeparatorTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/sprint" />
+        android:text="@string/board" />
 
     <TextView
-        android:id="@+id/reconciliation_sprint_text_view"
+        android:id="@+id/reconciliation_board_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"

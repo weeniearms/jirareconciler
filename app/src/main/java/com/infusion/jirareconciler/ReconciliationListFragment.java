@@ -199,7 +199,7 @@ public class ReconciliationListFragment extends ListFragment {
         startActivityForResult(intent, REQUEST_RECONCILIATION);
     }
 
-    private class ReconciliationAdapter extends ArrayAdapter<Reconciliation> {
+    class ReconciliationAdapter extends ArrayAdapter<Reconciliation> {
         public ReconciliationAdapter(List<Reconciliation> reconciliations) {
             super(getActivity(), 0, reconciliations);
         }
@@ -208,17 +208,28 @@ public class ReconciliationListFragment extends ListFragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
                 convertView = getActivity().getLayoutInflater().inflate(R.layout.list_item_reconciliation, null);
+                convertView.setTag(new ViewHolder(convertView));
             }
 
-            Reconciliation reconciliation = reconciliations.get(position);
-
-            TextView sprintTextView = (TextView) convertView.findViewById(R.id.reconciliation_list_item_sprint);
-            sprintTextView.setText(reconciliation.getBoard());
-
-            TextView dateTextView = (TextView) convertView.findViewById(R.id.reconciliation_list_item_date);
-            dateTextView.setText(reconciliation.getDate().toString());
+            ViewHolder holder = (ViewHolder) convertView.getTag();
+            holder.setReconciliation(reconciliations.get(position));
 
             return convertView;
+        }
+
+        class ViewHolder {
+            @InjectView(R.id.reconciliation_list_item_board) TextView boardTextview;
+            @InjectView(R.id.reconciliation_list_item_date) TextView dateTextView;
+
+            public ViewHolder(View view) {
+                ButterKnife.inject(this, view);
+            }
+
+            public void setReconciliation(Reconciliation reconciliation) {
+                boardTextview.setText(reconciliation.getBoard());
+                dateTextView.setText(reconciliation.getDate().toString());
+            }
+
         }
     }
 

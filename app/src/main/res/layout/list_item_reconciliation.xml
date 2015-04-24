@@ -7,11 +7,11 @@
     android:background="@drawable/background_activated">
 
     <TextView
-        android:id="@+id/reconciliation_list_item_sprint"
+        android:id="@+id/reconciliation_list_item_board"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:text="Reconciliation sprint" />
+        android:text="Reconciliation board" />
 
     <TextView
         android:id="@+id/reconciliation_list_item_date"
