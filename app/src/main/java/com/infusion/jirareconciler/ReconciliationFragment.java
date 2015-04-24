@@ -30,16 +30,20 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * Created by rcieslak on 21/04/2015.
  */
 public class ReconciliationFragment extends Fragment {
     public static final String EXTRA_RECONCILIATION_ID = "com.infusion.jirareconciler.reconciliation_id";
     private Reconciliation reconciliation;
-    private TextView boardTextView;
-    private TextView dateTextView;
-    private ListView issuesListView;
     private JiraHelper jiraHelper;
+
+    @InjectView(R.id.reconciliation_sprint_text_view) TextView boardTextView;
+    @InjectView(R.id.reconciliation_date_text_view) TextView dateTextView;
+    @InjectView(R.id.reconciliation_issues_list_view) ListView issuesListView;
 
     public static ReconciliationFragment newInstance(UUID id) {
         Bundle args = new Bundle();
@@ -85,19 +89,16 @@ public class ReconciliationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reconciliation, container, false);
+        ButterKnife.inject(this, view);
 
         if (NavUtils.getParentActivityName(getActivity()) != null) {
             ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        boardTextView = (TextView) view.findViewById(R.id.reconciliation_sprint_text_view);
         boardTextView.setText(reconciliation.getBoard());
-
-        dateTextView = (TextView) view.findViewById(R.id.reconciliation_date_text_view);
         dateTextView.setText(reconciliation.getDate().toString());
 
-        issuesListView = (ListView) view.findViewById(R.id.reconciliation_issues_list_view);
         issuesListView.setAdapter(new IssueAdapter(reconciliation.getIssues()));
         issuesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -109,6 +110,12 @@ public class ReconciliationFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
     }
 
     @Override

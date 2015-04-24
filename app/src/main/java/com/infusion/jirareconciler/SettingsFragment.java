@@ -16,6 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * Created by rcieslak on 20/04/2015.
  */
@@ -23,9 +26,10 @@ public class SettingsFragment extends Fragment {
     public static final String PREF_JIRA_URL = "jira_url";
     public static final String PREF_JIRA_USER = "jira_user";
     public static final String PREF_JIRA_PASSWORD = "jira_password";
-    private EditText urlEditText;
-    private EditText userEditText;
-    private EditText passwordEditText;
+
+    @InjectView(R.id.setting_url) EditText urlEditText;
+    @InjectView(R.id.setting_user)  EditText userEditText;
+    @InjectView(R.id.setting_password)  EditText passwordEditText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,10 +41,10 @@ public class SettingsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
+        ButterKnife.inject(this, view);
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-        urlEditText = (EditText) view.findViewById(R.id.setting_url);
         urlEditText.setText(preferences.getString(PREF_JIRA_URL, null));
         urlEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -55,7 +59,6 @@ public class SettingsFragment extends Fragment {
             public void afterTextChanged(Editable s) { }
         });
 
-        userEditText = (EditText) view.findViewById(R.id.setting_user);
         userEditText.setText(preferences.getString(PREF_JIRA_USER, null));
         userEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -70,7 +73,6 @@ public class SettingsFragment extends Fragment {
             public void afterTextChanged(Editable s) { }
         });
 
-        passwordEditText = (EditText) view.findViewById(R.id.setting_password);
         passwordEditText.setText(preferences.getString(PREF_JIRA_PASSWORD, null));
         passwordEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -91,6 +93,12 @@ public class SettingsFragment extends Fragment {
         }
         
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
     }
 
     @Override

@@ -31,6 +31,9 @@ import com.infusion.jirareconciler.model.ReconciliationStore;
 
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * Created by rcieslak on 20/04/2015.
  */
@@ -42,6 +45,8 @@ public class ReconciliationListFragment extends ListFragment {
     private List<Reconciliation> reconciliations;
     private ProgressDialog progressDialog;
     private JiraHelper jiraHelper;
+
+    @InjectView(android.R.id.list) ListView listView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,8 +66,8 @@ public class ReconciliationListFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
+        ButterKnife.inject(this, view);
 
-        ListView listView = (ListView) view.findViewById(android.R.id.list);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
@@ -108,10 +113,10 @@ public class ReconciliationListFragment extends ListFragment {
         return view;
     }
 
-    private void updateReconciliations() {
-        reconciliations = ReconciliationStore.get(getActivity()).getReconciliations();
-
-        setListAdapter(new ReconciliationAdapter(reconciliations));
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
     }
 
     @Override
@@ -144,12 +149,6 @@ public class ReconciliationListFragment extends ListFragment {
         super.onListItemClick(l, v, position, id);
 
         showReconciliation(reconciliations.get(position));
-    }
-
-    private void showReconciliation(Reconciliation reconciliation) {
-        Intent intent = new Intent(getActivity(), ReconciliationActivity.class);
-        intent.putExtra(ReconciliationFragment.EXTRA_RECONCILIATION_ID, reconciliation.getId());
-        startActivityForResult(intent, REQUEST_RECONCILIATION);
     }
 
     @Override
@@ -186,6 +185,18 @@ public class ReconciliationListFragment extends ListFragment {
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void updateReconciliations() {
+        reconciliations = ReconciliationStore.get(getActivity()).getReconciliations();
+
+        setListAdapter(new ReconciliationAdapter(reconciliations));
+    }
+
+    private void showReconciliation(Reconciliation reconciliation) {
+        Intent intent = new Intent(getActivity(), ReconciliationActivity.class);
+        intent.putExtra(ReconciliationFragment.EXTRA_RECONCILIATION_ID, reconciliation.getId());
+        startActivityForResult(intent, REQUEST_RECONCILIATION);
     }
 
     private class ReconciliationAdapter extends ArrayAdapter<Reconciliation> {

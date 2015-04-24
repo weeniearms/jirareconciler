@@ -14,6 +14,9 @@ import android.widget.Spinner;
 
 import com.infusion.jirareconciler.jira.Board;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * Created by rcieslak on 21/04/2015.
  */
@@ -22,7 +25,8 @@ public class BoardSelectorFragment extends DialogFragment {
     public static final String EXTRA_BOARDS = "com.infusion.jirareconciler.boards";
     private Board board;
     private Board[] boards;
-    private Spinner boardSpinner;
+
+    @InjectView(R.id.dialog_board_picker) Spinner boardSpinner;
 
     public static BoardSelectorFragment newInstance(Board[] boards) {
         Bundle args = new Bundle();
@@ -40,8 +44,8 @@ public class BoardSelectorFragment extends DialogFragment {
         board = boards[0];
 
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_board, null);
+        ButterKnife.inject(this, view);
 
-        boardSpinner = (Spinner) view.findViewById(R.id.dialog_board_picker);
         ArrayAdapter<Board> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, boards);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         boardSpinner.setAdapter(adapter);

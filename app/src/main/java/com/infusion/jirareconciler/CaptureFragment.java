@@ -27,6 +27,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * Created by rcieslak on 21/04/2015.
  */
@@ -35,18 +38,19 @@ public class CaptureFragment extends Fragment {
     public static final String EXTRA_BOARD_DETAILS = "com.infusion.jirareconciler.board_details";
     public static final String EXTRA_BOARD = "com.infusion.jirareconciler.board";
     public static final String EXTRA_RECONCILIATION = "com.infusion.jirareconciler.reconciliation";
-    private SurfaceView surfaceView;
     private Camera camera;
-    private View cropLeft;
-    private View cropRight;
-    private SeekBar cropSizeBar;
     private ProgressDialog progressDialog;
     private int currentLane;
     private Board board;
     private BoardDetails boardDetails;
-    private View cameraTrigger;
     private Reconciler reconciler;
-    private View cameraFocusTrigger;
+
+    @InjectView(R.id.lane_camera_surface_view) SurfaceView surfaceView;
+    @InjectView(R.id.crop_left) View cropLeft;
+    @InjectView(R.id.crop_right) View cropRight;
+    @InjectView(R.id.crop_size_bar) SeekBar cropSizeBar;
+    @InjectView(R.id.lane_camera_trigger) View cameraTrigger;
+    @InjectView(R.id.lane_camera_focus_trigger) View cameraFocusTrigger;
 
     public static CaptureFragment newInstance(Board board, BoardDetails boardDetails) {
         Bundle args = new Bundle();
@@ -79,13 +83,11 @@ public class CaptureFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_capture, null);
+        ButterKnife.inject(this, view);
 
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setCancelable(false);
 
-        cropLeft = view.findViewById(R.id.crop_left);
-        cropRight = view.findViewById(R.id.crop_right);
-        cropSizeBar = (SeekBar) view.findViewById(R.id.crop_size_bar);
         cropSizeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -99,7 +101,6 @@ public class CaptureFragment extends Fragment {
             public void onStopTrackingTouch(SeekBar seekBar) { }
         });
 
-        surfaceView = (SurfaceView) view.findViewById(R.id.lane_camera_surface_view);
         SurfaceHolder holder = surfaceView.getHolder();
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         holder.addCallback(new SurfaceHolder.Callback() {
@@ -144,7 +145,6 @@ public class CaptureFragment extends Fragment {
             }
         });
 
-        cameraFocusTrigger = view.findViewById(R.id.lane_camera_focus_trigger);
         cameraFocusTrigger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,7 +156,6 @@ public class CaptureFragment extends Fragment {
             }
         });
 
-        cameraTrigger = view.findViewById(R.id.lane_camera_trigger);
         cameraTrigger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -232,6 +231,30 @@ public class CaptureFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        camera = Camera.open(0);
+        camera.setDisplayOrientation(90);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (camera != null) {
+            camera.release();
+            camera = null;
+        }
+    }
+
     private void updateCropSize(int progress) {
         ViewGroup.LayoutParams leftParams = cropLeft.getLayoutParams();
         ViewGroup.LayoutParams rightParams = cropRight.getLayoutParams();
@@ -276,23 +299,5 @@ public class CaptureFragment extends Fragment {
         }
 
         return bestSize;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        camera = Camera.open(0);
-        camera.setDisplayOrientation(90);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        if (camera != null) {
-            camera.release();
-            camera = null;
-        }
     }
 }
