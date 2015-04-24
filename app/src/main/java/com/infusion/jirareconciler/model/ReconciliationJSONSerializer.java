@@ -60,7 +60,7 @@ public class ReconciliationJSONSerializer {
             InputStream inputStream = context.openFileInput(fileName);
             reader = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder jsonString = new StringBuilder();
-            String line = null;
+            String line;
             while ((line = reader.readLine()) != null) {
                 jsonString.append(line);
             }
