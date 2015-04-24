@@ -1,7 +1,5 @@
 package com.infusion.jirareconciler.model;
 
-import android.content.Context;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,15 +12,11 @@ import java.util.UUID;
  */
 public class ReconciliationStore {
     private static final Logger LOG = LoggerFactory.getLogger(ReconciliationStore.class);
-    private static final String FILENAME = "reconciliations.json";
-    private static ReconciliationStore reconciliationStore;
     private final ReconciliationJSONSerializer serializer;
-    private Context appContext;
     private List<Reconciliation> reconciliations;
 
-    private ReconciliationStore(Context context) {
-        appContext = context;
-        serializer = new ReconciliationJSONSerializer(appContext, FILENAME);
+    public ReconciliationStore(ReconciliationJSONSerializer serializer) {
+        this.serializer = serializer;
 
         try {
             reconciliations = serializer.loadReconciliations();
@@ -30,14 +24,6 @@ public class ReconciliationStore {
             reconciliations = new ArrayList<>();
             LOG.error("Error loading reconciliations", e);
         }
-    }
-
-    public static ReconciliationStore get(Context context) {
-        if (reconciliationStore == null) {
-            reconciliationStore = new ReconciliationStore(context.getApplicationContext());
-        }
-
-        return reconciliationStore;
     }
 
     public List<Reconciliation> getReconciliations() {

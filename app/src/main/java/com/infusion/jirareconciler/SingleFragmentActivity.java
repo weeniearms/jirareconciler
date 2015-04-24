@@ -3,12 +3,13 @@ package com.infusion.jirareconciler;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBarActivity;
+
+import com.infusion.jirareconciler.base.BaseActivity;
 
 /**
  * Created by rcieslak on 20/04/2015.
  */
-public abstract class SingleFragmentActivity extends ActionBarActivity {
+public abstract class SingleFragmentActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

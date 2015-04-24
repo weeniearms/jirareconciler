@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -19,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.infusion.jirareconciler.base.BaseFragment;
 import com.infusion.jirareconciler.jira.JiraHelper;
 import com.infusion.jirareconciler.model.Issue;
 import com.infusion.jirareconciler.model.Reconciliation;
@@ -29,6 +29,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnItemClick;
@@ -36,10 +38,12 @@ import butterknife.OnItemClick;
 /**
  * Created by rcieslak on 21/04/2015.
  */
-public class ReconciliationFragment extends Fragment {
+public class ReconciliationFragment extends BaseFragment {
     public static final String EXTRA_RECONCILIATION_ID = "com.infusion.jirareconciler.reconciliation_id";
     private Reconciliation reconciliation;
-    private JiraHelper jiraHelper;
+
+    @Inject ReconciliationStore reconciliationStore;
+    @Inject JiraHelper jiraHelper;
 
     @InjectView(R.id.reconciliation_board_text_view) TextView boardTextView;
     @InjectView(R.id.reconciliation_date_text_view) TextView dateTextView;
@@ -61,11 +65,14 @@ public class ReconciliationFragment extends Fragment {
 
         setRetainInstance(true);
         setHasOptionsMenu(true);
+    }
 
-        jiraHelper = new JiraHelper(getActivity());
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         UUID reconciliationId = (UUID) getArguments().getSerializable(EXTRA_RECONCILIATION_ID);
-        reconciliation = ReconciliationStore.get(getActivity()).getReconciliation(reconciliationId);
+        reconciliation = reconciliationStore.getReconciliation(reconciliationId);
         Collections.sort(reconciliation.getIssues(), new Comparator<Issue>() {
             @Override
             public int compare(Issue lhs, Issue rhs) {
@@ -84,6 +91,11 @@ public class ReconciliationFragment extends Fragment {
                 return lhs.getBoardState().compareTo(rhs.getBoardState());
             }
         });
+
+        boardTextView.setText(reconciliation.getBoard());
+        dateTextView.setText(reconciliation.getDate().toString());
+
+        issuesListView.setAdapter(new IssueAdapter(reconciliation.getIssues()));
     }
 
     @Override
@@ -95,11 +107,6 @@ public class ReconciliationFragment extends Fragment {
             ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-        boardTextView.setText(reconciliation.getBoard());
-        dateTextView.setText(reconciliation.getDate().toString());
-
-        issuesListView.setAdapter(new IssueAdapter(reconciliation.getIssues()));
 
         return view;
     }
@@ -118,7 +125,6 @@ public class ReconciliationFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_item_delete_item) {
-            ReconciliationStore reconciliationStore = ReconciliationStore.get(getActivity());
             reconciliationStore.deleteReconciliation(reconciliation);
             reconciliationStore.saveReconciliations();
             getActivity().setResult(Activity.RESULT_OK);

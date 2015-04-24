@@ -5,19 +5,23 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 
+import com.infusion.jirareconciler.base.BaseActivity;
 import com.infusion.jirareconciler.model.Reconciliation;
 import com.infusion.jirareconciler.model.ReconciliationStore;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by rcieslak on 21/04/2015.
  */
-public class ReconciliationActivity extends ActionBarActivity {
+public class ReconciliationActivity extends BaseActivity {
     private ViewPager viewPager;
     private List<Reconciliation> reconciliations;
+
+    @Inject ReconciliationStore reconciliationStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +31,7 @@ public class ReconciliationActivity extends ActionBarActivity {
         viewPager.setId(R.id.view_pager);
         setContentView(viewPager);
 
-        reconciliations = ReconciliationStore.get(this).getReconciliations();
+        reconciliations = reconciliationStore.getReconciliations();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         viewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {

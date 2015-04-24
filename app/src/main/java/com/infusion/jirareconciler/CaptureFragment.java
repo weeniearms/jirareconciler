@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -16,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 
+import com.infusion.jirareconciler.base.BaseFragment;
 import com.infusion.jirareconciler.jira.Board;
 import com.infusion.jirareconciler.jira.BoardDetails;
 import com.infusion.jirareconciler.reconciliation.IssueIdDecoder;
@@ -34,7 +34,7 @@ import butterknife.OnClick;
 /**
  * Created by rcieslak on 21/04/2015.
  */
-public class CaptureFragment extends Fragment {
+public class CaptureFragment extends BaseFragment {
     private static final Logger LOG = LoggerFactory.getLogger(CaptureFragment.class);
     public static final String EXTRA_BOARD_DETAILS = "com.infusion.jirareconciler.board_details";
     public static final String EXTRA_BOARD = "com.infusion.jirareconciler.board";
@@ -128,8 +128,7 @@ public class CaptureFragment extends Fragment {
                 camera.setParameters(parameters);
                 try {
                     camera.startPreview();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     LOG.error("Could not start preview", e);
                     camera.release();
                     camera = null;

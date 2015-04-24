@@ -6,12 +6,12 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.infusion.jirareconciler.base.BaseDialogFragment;
 import com.infusion.jirareconciler.jira.Board;
 
 import butterknife.ButterKnife;
@@ -20,7 +20,7 @@ import butterknife.InjectView;
 /**
  * Created by rcieslak on 21/04/2015.
  */
-public class BoardSelectorFragment extends DialogFragment {
+public class BoardSelectorFragment extends BaseDialogFragment {
     public static final String EXTRA_SELECTED_BOARD = "com.infusion.jirareconciler.selected_board";
     public static final String EXTRA_BOARDS = "com.infusion.jirareconciler.boards";
     private Board board;

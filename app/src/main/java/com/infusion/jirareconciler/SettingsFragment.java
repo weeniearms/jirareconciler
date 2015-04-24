@@ -4,17 +4,18 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+
+import com.infusion.jirareconciler.base.BaseFragment;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -23,11 +24,12 @@ import butterknife.OnTextChanged;
 /**
  * Created by rcieslak on 20/04/2015.
  */
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends BaseFragment {
     public static final String PREF_JIRA_URL = "jira_url";
     public static final String PREF_JIRA_USER = "jira_user";
     public static final String PREF_JIRA_PASSWORD = "jira_password";
-    private SharedPreferences preferences;
+
+    @Inject SharedPreferences preferences;
 
     @InjectView(R.id.setting_url) EditText urlEditText;
     @InjectView(R.id.setting_user)  EditText userEditText;
@@ -38,18 +40,21 @@ public class SettingsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         setRetainInstance(true);
+    }
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        urlEditText.setText(preferences.getString(PREF_JIRA_URL, null));
+        userEditText.setText(preferences.getString(PREF_JIRA_USER, null));
+        passwordEditText.setText(preferences.getString(PREF_JIRA_PASSWORD, null));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
         ButterKnife.inject(this, view);
-
-        urlEditText.setText(preferences.getString(PREF_JIRA_URL, null));
-        userEditText.setText(preferences.getString(PREF_JIRA_USER, null));
-        passwordEditText.setText(preferences.getString(PREF_JIRA_PASSWORD, null));
 
         ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
         if (NavUtils.getParentActivityName(getActivity()) != null) {

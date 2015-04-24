@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.ListFragment;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +22,7 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.infusion.jirareconciler.base.BaseListFragment;
 import com.infusion.jirareconciler.jira.Board;
 import com.infusion.jirareconciler.jira.BoardDetails;
 import com.infusion.jirareconciler.jira.JiraHelper;
@@ -31,20 +31,24 @@ import com.infusion.jirareconciler.model.ReconciliationStore;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 /**
  * Created by rcieslak on 20/04/2015.
  */
-public class ReconciliationListFragment extends ListFragment {
+public class ReconciliationListFragment extends BaseListFragment {
     private static final int REQUEST_CAPTURE = 0;
     private static final int REQUEST_BOARD = 1;
     private static final int REQUEST_RECONCILIATION = 2;
     private static final String DIALOG_BOARD = "board";
     private List<Reconciliation> reconciliations;
     private ProgressDialog progressDialog;
-    private JiraHelper jiraHelper;
+
+    @Inject ReconciliationStore reconciliationStore;
+    @Inject JiraHelper jiraHelper;
 
     @InjectView(android.R.id.list) ListView listView;
 
@@ -55,12 +59,15 @@ public class ReconciliationListFragment extends ListFragment {
         setRetainInstance(true);
         setHasOptionsMenu(true);
 
-        updateReconciliations();
-
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setCancelable(false);
+    }
 
-        jiraHelper = new JiraHelper(getActivity());
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        updateReconciliations();
     }
 
     @Override
@@ -89,7 +96,6 @@ public class ReconciliationListFragment extends ListFragment {
                 switch (item.getItemId()) {
                     case R.id.menu_item_delete_item:
                         ReconciliationAdapter adapter = (ReconciliationAdapter) getListAdapter();
-                        ReconciliationStore reconciliationStore = ReconciliationStore.get(getActivity());
 
                         for (int i = adapter.getCount() - 1; i >= 0; i--) {
                             if (getListView().isItemChecked(i)) {
@@ -174,7 +180,6 @@ public class ReconciliationListFragment extends ListFragment {
                 break;
             case REQUEST_CAPTURE:
                 Reconciliation reconciliation = (Reconciliation) data.getSerializableExtra(CaptureFragment.EXTRA_RECONCILIATION);
-                ReconciliationStore reconciliationStore = ReconciliationStore.get(getActivity());
                 reconciliationStore.addReconciliation(reconciliation);
                 reconciliationStore.saveReconciliations();
 
@@ -188,7 +193,7 @@ public class ReconciliationListFragment extends ListFragment {
     }
 
     private void updateReconciliations() {
-        reconciliations = ReconciliationStore.get(getActivity()).getReconciliations();
+        reconciliations = reconciliationStore.getReconciliations();
 
         setListAdapter(new ReconciliationAdapter(reconciliations));
     }
