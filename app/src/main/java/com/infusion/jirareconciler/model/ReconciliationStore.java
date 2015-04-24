@@ -7,14 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /**
  * Created by rcieslak on 21/04/2015.
  */
+@Singleton
 public class ReconciliationStore {
     private static final Logger LOG = LoggerFactory.getLogger(ReconciliationStore.class);
     private final ReconciliationJSONSerializer serializer;
     private List<Reconciliation> reconciliations;
 
+    @Inject
     public ReconciliationStore(ReconciliationJSONSerializer serializer) {
         this.serializer = serializer;
 

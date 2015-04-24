@@ -1,9 +1,7 @@
 package com.infusion.jirareconciler.jira;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.util.Base64;
 
 import com.infusion.jirareconciler.SettingsFragment;
@@ -24,6 +22,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -34,6 +34,7 @@ import javax.net.ssl.X509TrustManager;
 /**
  * Created by rcieslak on 21/04/2015.
  */
+@Singleton
 public class JiraHelper {
     private static final Logger LOG = LoggerFactory.getLogger(JiraHelper.class);
     private static final String PATH_BOARD_LIST = "rest/greenhopper/1.0/rapidviews/list";
@@ -41,17 +42,17 @@ public class JiraHelper {
     private static final String PATH_BROWSE_ISSUE = "browse";
     private static final String PARAM_BOARD_ID = "rapidViewId";
     private static final String JSON_VIEWS = "views";
-    private final Context context;
+    private final SharedPreferences preferences;
 
-    public JiraHelper(Context context) {
-        this.context = context;
+    @Inject
+    public JiraHelper(SharedPreferences preferences) {
+        this.preferences = preferences;
     }
 
     public List<Board> fetchBoards() {
         List<Board> boards = new ArrayList<>();
 
         try {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
             String url = Uri.parse(preferences.getString(SettingsFragment.PREF_JIRA_URL, null))
                     .buildUpon()
                     .appendEncodedPath(PATH_BOARD_LIST)
@@ -73,7 +74,6 @@ public class JiraHelper {
 
     public BoardDetails fetchBoardDetails(String boardId) {
         try {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
             String url = Uri.parse(preferences.getString(SettingsFragment.PREF_JIRA_URL, null))
                     .buildUpon()
                     .appendEncodedPath(PATH_BOARD_DETAILS)
@@ -91,7 +91,6 @@ public class JiraHelper {
     }
 
     public String getIssueUrl(String issueId) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String url = Uri.parse(preferences.getString(SettingsFragment.PREF_JIRA_URL, null))
                 .buildUpon()
                 .appendEncodedPath(PATH_BROWSE_ISSUE)
@@ -158,7 +157,6 @@ public class JiraHelper {
     }
 
     private String getUserPass() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String user = preferences.getString(SettingsFragment.PREF_JIRA_USER, null);
         String password = preferences.getString(SettingsFragment.PREF_JIRA_PASSWORD, null);
         return "Basic " + Base64.encodeToString((user + ":" + password).getBytes(), Base64.NO_WRAP);
