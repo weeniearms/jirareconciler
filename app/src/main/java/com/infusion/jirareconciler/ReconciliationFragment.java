@@ -17,13 +17,18 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.infusion.jirareconciler.base.BaseFragment;
+import com.infusion.jirareconciler.cards.IssueCardsFileProvider;
+import com.infusion.jirareconciler.cards.IssueCardsGenerator;
 import com.infusion.jirareconciler.jira.JiraHelper;
 import com.infusion.jirareconciler.model.Issue;
 import com.infusion.jirareconciler.model.Reconciliation;
 import com.infusion.jirareconciler.model.ReconciliationStore;
+import com.itextpdf.text.DocumentException;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -44,6 +49,7 @@ public class ReconciliationFragment extends BaseFragment {
 
     @Inject ReconciliationStore reconciliationStore;
     @Inject JiraHelper jiraHelper;
+    @Inject IssueCardsGenerator generator;
 
     @InjectView(R.id.reconciliation_board_text_view) TextView boardTextView;
     @InjectView(R.id.reconciliation_date_text_view) TextView dateTextView;
@@ -124,11 +130,35 @@ public class ReconciliationFragment extends BaseFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_item_delete_item) {
-            reconciliationStore.deleteReconciliation(reconciliation);
-            reconciliationStore.saveReconciliations();
-            getActivity().setResult(Activity.RESULT_OK);
-            getActivity().finish();
+        switch (item.getItemId()) {
+            case R.id.menu_item_delete_item:
+                reconciliationStore.deleteReconciliation(reconciliation);
+                reconciliationStore.saveReconciliations();
+                getActivity().setResult(Activity.RESULT_OK);
+                getActivity().finish();
+                break;
+            case R.id.menu_item_export_missing_cards:
+                try {
+                    String issuesFile = "issues.pdf";
+                    generator.generateCards(reconciliation.getIssues(), issuesFile);
+
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setType("plain/text");
+                    emailIntent.putExtra(
+                            Intent.EXTRA_SUBJECT,
+                            getString(
+                                    R.string.reconciliation_email_subject,
+                                    reconciliation.getBoard(),
+                                    reconciliation.getDate()));
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.reconciliation_email_text));
+                    emailIntent.putExtra(
+                            Intent.EXTRA_STREAM,
+                            Uri.parse("content://" + IssueCardsFileProvider.AUTHORITY + "/" + issuesFile));
+                    startActivity(emailIntent);
+                } catch (IOException | DocumentException e) {
+                    Toast.makeText(getActivity(), "Error occured while generating cards", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
 
         return super.onOptionsItemSelected(item);

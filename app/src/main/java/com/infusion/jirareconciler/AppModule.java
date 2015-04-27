@@ -1,5 +1,6 @@
 package com.infusion.jirareconciler;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
@@ -29,9 +30,14 @@ public class AppModule {
         this.app = app;
     }
 
+    @Provides @Singleton Context providesContext() {
+        return app;
+    }
+
     @Provides @Singleton ReconciliationJSONSerializer provideReconciliationJSONSerializer() {
         return new ReconciliationJSONSerializer(app, RECONCILIATIONS_FILENAME);
     }
+
     @Provides @Singleton SharedPreferences provideSharedPreferences() {
         return PreferenceManager.getDefaultSharedPreferences(app);
     }
