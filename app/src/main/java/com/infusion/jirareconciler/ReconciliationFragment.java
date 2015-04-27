@@ -79,24 +79,6 @@ public class ReconciliationFragment extends BaseFragment {
 
         UUID reconciliationId = (UUID) getArguments().getSerializable(EXTRA_RECONCILIATION_ID);
         reconciliation = reconciliationStore.getReconciliation(reconciliationId);
-        Collections.sort(reconciliation.getIssues(), new Comparator<Issue>() {
-            @Override
-            public int compare(Issue lhs, Issue rhs) {
-                if (lhs.getBoardState() == null && rhs.getBoardState() == null) {
-                    return 0;
-                }
-
-                if (lhs.getBoardState() == null) {
-                    return -1;
-                }
-
-                if (rhs.getBoardState() == null) {
-                    return 1;
-                }
-
-                return lhs.getBoardState().compareTo(rhs.getBoardState());
-            }
-        });
 
         boardTextView.setText(reconciliation.getBoard());
         dateTextView.setText(reconciliation.getDate().toString());
@@ -174,6 +156,28 @@ public class ReconciliationFragment extends BaseFragment {
     class IssueAdapter extends ArrayAdapter<Issue> {
         public IssueAdapter(List<Issue> issues) {
             super(getActivity(), 0, issues);
+
+            Collections.sort(issues, new Comparator<Issue>() {
+                @Override
+                public int compare(Issue lhs, Issue rhs) {
+                    int result = compareState(lhs.getBoardState(), rhs.getBoardState());
+
+                    if (result == 0) {
+                        result = compareState(lhs.getJiraState(), rhs.getJiraState());
+                    }
+
+                    return result;
+                }
+
+                private int compareState(String lhs, String rhs) {
+                    if (lhs == null && rhs == null) return 0;
+                    if (lhs == null) return -1;
+                    if (rhs == null) return 1;
+
+                    return lhs.compareTo(rhs);
+                }
+            });
+
         }
 
         @Override
