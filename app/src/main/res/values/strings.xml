@@ -29,4 +29,5 @@
     <string name="export_missing">Export missing cards</string>
     <string name="reconciliation_email_subject">Reconciliation: %1$s - %2$s</string>
     <string name="reconciliation_email_text">Attached you will find the missing task cards.</string>
+    <string name="missing">Missing</string>
 </resources>

@@ -4,27 +4,43 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/issue_list_item_board_state"
+    <RelativeLayout
+        android:id="@+id/issue_list_item_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="4dp"
-        android:text="TO DO"
-        android:background="@android:color/darker_gray" />
+        android:layout_height="48dp">
+        <View
+            style="@style/Divider"
+            android:layout_alignParentTop="true" />
+
+        <TextView
+            android:id="@+id/issue_list_item_board_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:text="TO DO" />
+
+        <View
+            style="@style/Divider"
+            android:layout_alignParentBottom="true" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="4dp">
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp">
 
         <TextView
             android:id="@+id/issue_list_item_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_marginBottom="8dp"
             android:text="ISSUE-123"
-            android:textStyle="bold" />
+            android:textColor="@color/colorPrimaryText" />
 
         <TextView
             android:id="@+id/issue_list_item_title"
@@ -32,7 +48,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/issue_list_item_id"
-            android:paddingTop="4dp"
             android:text="Test issue title" />
 
         <TextView
@@ -41,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:text="IN PROGRESS"
-            android:textColor="@color/holo_red_dark" />
+            android:textColor="@color/colorAccent" />
 
     </RelativeLayout>
 </LinearLayout>

@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.infusion.jirareconciler.base.BaseFragment;
 import com.infusion.jirareconciler.base.BaseListFragment;
 import com.infusion.jirareconciler.jira.Board;
 import com.infusion.jirareconciler.jira.BoardDetails;
@@ -35,11 +36,13 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
+import butterknife.OnItemClick;
 
 /**
  * Created by rcieslak on 20/04/2015.
  */
-public class ReconciliationListFragment extends BaseListFragment {
+public class ReconciliationListFragment extends BaseFragment {
     private static final int REQUEST_CAPTURE = 0;
     private static final int REQUEST_BOARD = 1;
     private static final int REQUEST_RECONCILIATION = 2;
@@ -50,7 +53,7 @@ public class ReconciliationListFragment extends BaseListFragment {
     @Inject ReconciliationStore reconciliationStore;
     @Inject JiraHelper jiraHelper;
 
-    @InjectView(android.R.id.list) ListView listView;
+    @InjectView(R.id.reconciliation_list) ListView listView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +75,7 @@ public class ReconciliationListFragment extends BaseListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_reconciliation_list, container, false);
         ButterKnife.inject(this, view);
 
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -95,10 +98,10 @@ public class ReconciliationListFragment extends BaseListFragment {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_item_delete_item:
-                        ReconciliationAdapter adapter = (ReconciliationAdapter) getListAdapter();
+                        ReconciliationAdapter adapter = (ReconciliationAdapter) listView.getAdapter();
 
                         for (int i = adapter.getCount() - 1; i >= 0; i--) {
-                            if (getListView().isItemChecked(i)) {
+                            if (listView.isItemChecked(i)) {
                                 reconciliationStore.deleteReconciliation(adapter.getItem(i));
                             }
                         }
@@ -141,20 +144,19 @@ public class ReconciliationListFragment extends BaseListFragment {
                 IntentIntegrator integrator = IntentIntegrator.forSupportFragment(ReconciliationListFragment.this);
                 integrator.initiateScan();
                 return true;
-            case R.id.menu_item_new_reconciliation:
-                new FetchBoardsTask().execute();
-
-                return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-
+    @OnItemClick(R.id.reconciliation_list)
+    public void openReconciliation(int position) {
         showReconciliation(reconciliations.get(position));
+    }
+
+    @OnClick(R.id.reconciliation_list_add)
+    public void newReconciliation() {
+        new FetchBoardsTask().execute();
     }
 
     @Override
@@ -195,7 +197,7 @@ public class ReconciliationListFragment extends BaseListFragment {
     private void updateReconciliations() {
         reconciliations = reconciliationStore.getReconciliations();
 
-        setListAdapter(new ReconciliationAdapter(reconciliations));
+        listView.setAdapter(new ReconciliationAdapter(reconciliations));
     }
 
     private void showReconciliation(Reconciliation reconciliation) {

@@ -148,7 +148,7 @@ public class ReconciliationFragment extends BaseFragment {
 
     @OnItemClick(R.id.reconciliation_issues_list_view)
     public void navigateToIssue(int position) {
-        Issue issue = (Issue) issuesListView.getAdapter().getItem(position);
+        Issue issue = reconciliation.getIssues().get(position);
         Intent browseIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(jiraHelper.getIssueUrl(issue.getId())));
         startActivity(browseIntent);
     }
@@ -177,24 +177,22 @@ public class ReconciliationFragment extends BaseFragment {
                     return lhs.compareTo(rhs);
                 }
             });
-
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Issue issue = reconciliation.getIssues().get(position);
-            Issue previousIssue = position == 0 ? null : reconciliation.getIssues().get(position - 1);
-            boolean isGroupStart = position == 0 ||
-                    (issue.getBoardState() != previousIssue.getBoardState()) &&
-                            (issue.getBoardState() != null && !issue.getBoardState().equals(previousIssue.getBoardState()) ||
-                                    previousIssue.getBoardState() != null && !previousIssue.getBoardState().equals(issue.getBoardState()));
-
             if (convertView == null) {
                 convertView = getActivity().getLayoutInflater().inflate(R.layout.list_item_issue, null);
                 convertView.setTag(new ViewHolder(convertView));
             }
 
             ViewHolder holder = (ViewHolder) convertView.getTag();
+            Issue issue = reconciliation.getIssues().get(position);
+            Issue previousIssue = position == 0 ? null : reconciliation.getIssues().get(position - 1);
+            boolean isGroupStart = position == 0 ||
+                    (issue.getBoardState() != previousIssue.getBoardState()) &&
+                            (issue.getBoardState() != null && !issue.getBoardState().equals(previousIssue.getBoardState()) ||
+                                    previousIssue.getBoardState() != null && !previousIssue.getBoardState().equals(issue.getBoardState()));
             holder.setIssue(issue, isGroupStart);
 
             return convertView;
@@ -205,6 +203,7 @@ public class ReconciliationFragment extends BaseFragment {
             @InjectView(R.id.issue_list_item_title) TextView titleTextView;
             @InjectView(R.id.issue_list_item_board_state) TextView boardStateTextView;
             @InjectView(R.id.issue_list_item_jira_state) TextView jiraStateTextView;
+            @InjectView(R.id.issue_list_item_header) View headerContainer;
 
             public ViewHolder(View view) {
                 ButterKnife.inject(this, view);
@@ -213,10 +212,13 @@ public class ReconciliationFragment extends BaseFragment {
             public void setIssue(Issue issue, boolean isGroupStart) {
                 issueIdTextView.setText(issue.getId());
                 titleTextView.setText(issue.getTitle());
-                boardStateTextView.setText(issue.getBoardState());
+                boardStateTextView.setText(
+                        issue.getBoardState() == null || issue.getBoardState().equals("") ?
+                                getString(R.string.missing) :
+                                issue.getBoardState());
                 jiraStateTextView.setText(issue.getJiraState());
 
-                boardStateTextView.setVisibility(isGroupStart ? View.VISIBLE : View.GONE);
+                headerContainer.setVisibility(isGroupStart ? View.VISIBLE : View.GONE);
             }
         }
     }
