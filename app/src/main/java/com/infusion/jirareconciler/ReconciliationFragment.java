@@ -1,19 +1,24 @@
 package com.infusion.jirareconciler;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -46,13 +51,15 @@ import butterknife.OnItemClick;
 public class ReconciliationFragment extends BaseFragment {
     public static final String EXTRA_RECONCILIATION_ID = "com.infusion.jirareconciler.reconciliation_id";
     private Reconciliation reconciliation;
+    private ObjectAnimator fade;
+    private View containerHeader;
+    private TextView boardTextView;
+    private TextView dateTextView;
 
     @Inject ReconciliationStore reconciliationStore;
     @Inject JiraHelper jiraHelper;
     @Inject IssueCardsGenerator generator;
 
-    @InjectView(R.id.reconciliation_board_text_view) TextView boardTextView;
-    @InjectView(R.id.reconciliation_date_text_view) TextView dateTextView;
     @InjectView(R.id.reconciliation_issues_list_view) ListView issuesListView;
 
     public static ReconciliationFragment newInstance(UUID id) {
@@ -80,6 +87,7 @@ public class ReconciliationFragment extends BaseFragment {
         UUID reconciliationId = (UUID) getArguments().getSerializable(EXTRA_RECONCILIATION_ID);
         reconciliation = reconciliationStore.getReconciliation(reconciliationId);
 
+        getActivity().setTitle(reconciliation.getBoard());
         boardTextView.setText(reconciliation.getBoard());
         dateTextView.setText(reconciliation.getDate().toString());
 
@@ -95,6 +103,42 @@ public class ReconciliationFragment extends BaseFragment {
             ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        View headerView = LayoutInflater.from(getActivity()).inflate(R.layout.list_header, issuesListView, false);
+        containerHeader = headerView.findViewById(R.id.header_container);
+        boardTextView = (TextView) headerView.findViewById(R.id.header_title);
+        dateTextView = (TextView) headerView.findViewById(R.id.header_description);
+        fade = ObjectAnimator.ofFloat(containerHeader, "alpha", 0f, 1f);
+        fade.setInterpolator(new DecelerateInterpolator());
+        fade.setDuration(400);
+        issuesListView.addHeaderView(headerView);
+        issuesListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) { }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (view != null && view.getChildCount() > 0 && firstVisibleItem == 0) {
+                    if (view.getChildAt(0).getTop() < -dpToPx(16)) {
+                        toggleHeader(false, false);
+                    } else {
+                        toggleHeader(true, true);
+                    }
+                } else {
+                    toggleHeader(false, false);
+                }
+
+
+                if (((ActionBarActivity)getActivity()).getSupportActionBar() != null) {
+                    if (firstVisibleItem == 0) {
+                        ((ActionBarActivity) getActivity()).getSupportActionBar().setElevation(0);
+                    }
+                    else {
+                        ((ActionBarActivity) getActivity()).getSupportActionBar().setElevation(dpToPx(4));
+                    }
+                }
+            }
+        });
 
         return view;
     }
@@ -156,6 +200,27 @@ public class ReconciliationFragment extends BaseFragment {
         Issue issue = reconciliation.getIssues().get(position);
         Intent browseIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(jiraHelper.getIssueUrl(issue.getId())));
         startActivity(browseIntent);
+    }
+
+    public int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        return (int)(dp * (displayMetrics.densityDpi / 160f));
+    }
+
+    private void toggleHeader(boolean visible, boolean force) {
+        if ((force && visible) || (visible && containerHeader.getAlpha() == 0f)) {
+            fade.setFloatValues(containerHeader.getAlpha(), 1f);
+            fade.start();
+        }
+        else if (force || (!visible && containerHeader.getAlpha() == 1f)){
+            fade.setFloatValues(containerHeader.getAlpha(), 0f);
+            fade.start();
+        }
+
+
+        if (((ActionBarActivity)getActivity()).getSupportActionBar() != null) {
+            ((ActionBarActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(!visible);
+        }
     }
 
     class IssueAdapter extends ArrayAdapter<Issue> {

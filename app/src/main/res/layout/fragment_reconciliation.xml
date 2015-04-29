@@ -4,47 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/board" />
-
-    <TextView
-        android:id="@+id/reconciliation_board_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:text="Test board"
-        android:textColor="@color/colorPrimaryText"
-        android:textSize="32dp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/date" />
-
-    <TextView
-        android:id="@+id/reconciliation_date_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:text="Thu Apr 23 13:06:18 CEST 2015"
-        android:textColor="@color/colorPrimaryText"
-        android:textSize="18dp" />
-
     <ListView
-        android:layout_marginTop="16dp"
         android:id="@+id/reconciliation_issues_list_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:divider="@null" />
 
 </LinearLayout>

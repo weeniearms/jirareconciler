@@ -12,4 +12,5 @@
     <color name="colorFab">#FF4081</color>
     <color name="colorFabPressed">#C2185B</color>
     <color name="colorOval">#88212121</color>
+    <color name="colorIcons">#FFFFFF</color>
 </resources>
