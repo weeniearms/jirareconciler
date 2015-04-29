@@ -18,7 +18,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/fab_button_margin_bottom"
         android:layout_marginRight="@dimen/fab_button_margin_right"
-        android:background="@drawable/fab_shape"
+        android:background="@drawable/background_fab"
         android:src="@drawable/ic_action_add"
         android:tint="@android:color/white" />
 

@@ -113,6 +113,11 @@ public class ReconciliationFragment extends BaseFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                if (NavUtils.getParentActivityName(getActivity()) != null) {
+                    NavUtils.navigateUpFromSameTask(getActivity());
+                }
+                return true;
             case R.id.menu_item_delete_item:
                 reconciliationStore.deleteReconciliation(reconciliation);
                 reconciliationStore.saveReconciliations();

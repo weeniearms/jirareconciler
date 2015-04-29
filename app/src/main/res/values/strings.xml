@@ -13,7 +13,6 @@
     <string name="scan_ticket">Scan ticket</string>
     <string name="new_reconciliation">New reconciliation</string>
     <string name="date">Date</string>
-    <string name="issues">Issues</string>
     <string name="board_picker_title">Select board:</string>
     <string name="no_lanes">Selected board has no lanes</string>
     <string name="no_issues">Selected board has no issues</string>
@@ -30,4 +29,5 @@
     <string name="reconciliation_email_subject">Reconciliation: %1$s - %2$s</string>
     <string name="reconciliation_email_text">Attached you will find the missing task cards.</string>
     <string name="missing">Missing</string>
+    <string name="reconciliations">Reconciliations</string>
 </resources>

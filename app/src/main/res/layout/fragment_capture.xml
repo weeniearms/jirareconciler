@@ -39,7 +39,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:src="@android:drawable/ic_menu_camera"
-            android:background="#66000000"
+            android:background="@drawable/background_oval"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="8dp" />
