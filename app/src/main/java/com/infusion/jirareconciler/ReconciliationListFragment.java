@@ -45,8 +45,10 @@ import butterknife.OnItemClick;
 public class ReconciliationListFragment extends BaseFragment {
     private static final int REQUEST_CAPTURE = 0;
     private static final int REQUEST_BOARD = 1;
-    private static final int REQUEST_RECONCILIATION = 2;
+    private static final int REQUEST_LANES = 2;
+    private static final int REQUEST_RECONCILIATION = 3;
     private static final String DIALOG_BOARD = "board";
+    private static final String DIALOG_LANE = "lane";
     private List<Reconciliation> reconciliations;
     private ProgressDialog progressDialog;
 
@@ -180,6 +182,22 @@ public class ReconciliationListFragment extends BaseFragment {
                 Board board = (Board) data.getSerializableExtra(BoardSelectorFragment.EXTRA_SELECTED_BOARD);
                 new FetchBoardDetailsTask().execute(board);
                 break;
+            case REQUEST_LANES:
+                String[] lanes = (String[]) data.getSerializableExtra(LaneSelectorFragment.EXTRA_SELECTED_LANES);
+                if (lanes == null || lanes.length == 0) {
+                    Toast.makeText(getActivity(), R.string.no_lanes_selected, Toast.LENGTH_SHORT).show();
+                    break;
+                }
+
+                Intent captureIntent = new Intent(getActivity(), CaptureActivity.class);
+                captureIntent.putExtra(CaptureFragment.EXTRA_BOARD,
+                        data.getSerializableExtra(LaneSelectorFragment.EXTRA_BOARD));
+                captureIntent.putExtra(CaptureFragment.EXTRA_BOARD_DETAILS,
+                        data.getSerializableExtra(LaneSelectorFragment.EXTRA_BOARD_DETAILS));
+                captureIntent.putExtra(CaptureFragment.EXTRA_LANES,
+                        data.getSerializableExtra(LaneSelectorFragment.EXTRA_SELECTED_LANES));
+                startActivityForResult(captureIntent, 0);
+                break;
             case REQUEST_CAPTURE:
                 Reconciliation reconciliation = (Reconciliation) data.getSerializableExtra(CaptureFragment.EXTRA_RECONCILIATION);
                 reconciliationStore.addReconciliation(reconciliation);
@@ -293,10 +311,10 @@ public class ReconciliationListFragment extends BaseFragment {
                 return;
             }
 
-            Intent captureIntent = new Intent(getActivity(), CaptureActivity.class);
-            captureIntent.putExtra(CaptureFragment.EXTRA_BOARD, board);
-            captureIntent.putExtra(CaptureFragment.EXTRA_BOARD_DETAILS, boardDetails);
-            startActivityForResult(captureIntent, 0);
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            LaneSelectorFragment dialog = LaneSelectorFragment.newInstance(board, boardDetails);
+            dialog.setTargetFragment(ReconciliationListFragment.this, REQUEST_LANES);
+            dialog.show(fragmentManager, DIALOG_LANE);
         }
     }
 }

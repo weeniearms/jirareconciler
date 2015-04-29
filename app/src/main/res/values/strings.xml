@@ -30,4 +30,7 @@
     <string name="reconciliation_email_text">Attached you will find the missing task cards.</string>
     <string name="missing">Missing</string>
     <string name="reconciliations">Reconciliations</string>
+    <string name="lane_picker_title">Select lanes:</string>
+    <string name="no_lanes_selected">No lanes selected</string>
+    <string name="toggle_all">Toggle All</string>
 </resources>

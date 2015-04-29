@@ -20,7 +20,7 @@ import dagger.Provides;
                 BoardSelectorFragment.class, CaptureFragment.class, CaptureActivity.class,
                 ReconciliationActivity.class, ReconciliationFragment.class,
                 ReconciliationListActivity.class, ReconciliationListFragment.class,
-                SettingsActivity.class, SettingsFragment.class
+                SettingsActivity.class, SettingsFragment.class, LaneSelectorFragment.class
         })
 public class AppModule {
     private static final String RECONCILIATIONS_FILENAME = "reconciliations.json";

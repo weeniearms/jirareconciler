@@ -13,6 +13,7 @@ public class CaptureActivity extends SingleFragmentActivity {
     protected Fragment createFragment() {
         return CaptureFragment.newInstance(
                 (Board) getIntent().getSerializableExtra(CaptureFragment.EXTRA_BOARD),
-                (BoardDetails) getIntent().getSerializableExtra(CaptureFragment.EXTRA_BOARD_DETAILS));
+                (BoardDetails) getIntent().getSerializableExtra(CaptureFragment.EXTRA_BOARD_DETAILS),
+                (String[]) getIntent().getSerializableExtra(CaptureFragment.EXTRA_LANES));
     }
 }

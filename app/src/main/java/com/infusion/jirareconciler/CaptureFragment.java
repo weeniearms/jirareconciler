@@ -43,11 +43,13 @@ public class CaptureFragment extends BaseFragment {
     public static final String EXTRA_BOARD_DETAILS = "com.infusion.jirareconciler.board_details";
     public static final String EXTRA_BOARD = "com.infusion.jirareconciler.board";
     public static final String EXTRA_RECONCILIATION = "com.infusion.jirareconciler.reconciliation";
+    public static final String EXTRA_LANES = "com.infusion.jirareconciler.lanes";
     private Camera camera;
     private ProgressDialog progressDialog;
     private int currentLane;
     private Board board;
     private BoardDetails boardDetails;
+    private String[] lanes;
     private Reconciler reconciler;
 
     @InjectView(R.id.lane_camera_surface_view) SurfaceView surfaceView;
@@ -55,10 +57,11 @@ public class CaptureFragment extends BaseFragment {
     @InjectView(R.id.crop_right) View cropRight;
     @InjectView(R.id.crop_size_bar) SeekBar cropSizeBar;
 
-    public static CaptureFragment newInstance(Board board, BoardDetails boardDetails) {
+    public static CaptureFragment newInstance(Board board, BoardDetails boardDetails, String[] lanes) {
         Bundle args = new Bundle();
         args.putSerializable(EXTRA_BOARD, board);
         args.putSerializable(EXTRA_BOARD_DETAILS, boardDetails);
+        args.putSerializable(EXTRA_LANES, lanes);
 
         CaptureFragment fragment = new CaptureFragment();
         fragment.setArguments(args);
@@ -74,13 +77,14 @@ public class CaptureFragment extends BaseFragment {
 
         board = (Board) getArguments().getSerializable(EXTRA_BOARD);
         boardDetails = (BoardDetails) getArguments().getSerializable(EXTRA_BOARD_DETAILS);
+        lanes = (String[]) getArguments().getSerializable(EXTRA_LANES);
         reconciler = new Reconciler(board, boardDetails);
 
         updateCurrentLane();
     }
 
     private void updateCurrentLane() {
-        getActivity().setTitle(boardDetails.getLanes()[currentLane]);
+        getActivity().setTitle(lanes[currentLane]);
     }
 
     @Override
@@ -239,11 +243,11 @@ public class CaptureFragment extends BaseFragment {
                                             public void onClick(DialogInterface dialog, int which) {
                                                 dialog.dismiss();
 
-                                                reconciler.addLane(boardDetails.getLanes()[currentLane], issueIds);
+                                                reconciler.addLane(lanes[currentLane], issueIds);
 
                                                 currentLane++;
 
-                                                if (currentLane >= boardDetails.getLanes().length) {
+                                                if (currentLane >= lanes.length) {
                                                     Intent intent = new Intent();
                                                     intent.putExtra(EXTRA_RECONCILIATION, reconciler.reconcile());
                                                     getActivity().setResult(Activity.RESULT_OK, intent);
