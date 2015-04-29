@@ -4,7 +4,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Base64;
 
-import com.infusion.jirareconciler.SettingsFragment;
+import com.infusion.jirareconciler.SettingsActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,7 +53,7 @@ public class JiraHelper {
         List<Board> boards = new ArrayList<>();
 
         try {
-            String url = Uri.parse(preferences.getString(SettingsFragment.PREF_JIRA_URL, null))
+            String url = Uri.parse(preferences.getString(SettingsActivity.PREF_JIRA_URL, null))
                     .buildUpon()
                     .appendEncodedPath(PATH_BOARD_LIST)
                     .build()
@@ -74,7 +74,7 @@ public class JiraHelper {
 
     public BoardDetails fetchBoardDetails(String boardId) {
         try {
-            String url = Uri.parse(preferences.getString(SettingsFragment.PREF_JIRA_URL, null))
+            String url = Uri.parse(preferences.getString(SettingsActivity.PREF_JIRA_URL, null))
                     .buildUpon()
                     .appendEncodedPath(PATH_BOARD_DETAILS)
                     .appendQueryParameter(PARAM_BOARD_ID, boardId)
@@ -91,7 +91,7 @@ public class JiraHelper {
     }
 
     public String getIssueUrl(String issueId) {
-        String url = Uri.parse(preferences.getString(SettingsFragment.PREF_JIRA_URL, null))
+        String url = Uri.parse(preferences.getString(SettingsActivity.PREF_JIRA_URL, null))
                 .buildUpon()
                 .appendEncodedPath(PATH_BROWSE_ISSUE)
                 .appendEncodedPath(issueId)
@@ -157,8 +157,8 @@ public class JiraHelper {
     }
 
     private String getUserPass() {
-        String user = preferences.getString(SettingsFragment.PREF_JIRA_USER, null);
-        String password = preferences.getString(SettingsFragment.PREF_JIRA_PASSWORD, null);
+        String user = preferences.getString(SettingsActivity.PREF_JIRA_USER, null);
+        String password = preferences.getString(SettingsActivity.PREF_JIRA_PASSWORD, null);
         return "Basic " + Base64.encodeToString((user + ":" + password).getBytes(), Base64.NO_WRAP);
     }
 }

@@ -1,10 +1,8 @@
 package com.infusion.jirareconciler;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,8 +19,8 @@ import butterknife.InjectView;
  * Created by rcieslak on 21/04/2015.
  */
 public class BoardSelectorFragment extends BaseDialogFragment {
-    public static final String EXTRA_SELECTED_BOARD = "com.infusion.jirareconciler.selected_board";
     public static final String EXTRA_BOARDS = "com.infusion.jirareconciler.boards";
+    private OnBoardSelectedListener boardSelectedListener;
     private Board board;
     private Board[] boards;
 
@@ -66,29 +64,22 @@ public class BoardSelectorFragment extends BaseDialogFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                sendResult(Activity.RESULT_OK);
+                                if (boardSelectedListener != null) {
+                                    boardSelectedListener.boardSelected(board);
+                                }
                             }
                         })
-                .setNegativeButton(android.R.string.cancel,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                sendResult(Activity.RESULT_CANCELED);
-                            }
-                        })
+                .setNegativeButton(android.R.string.cancel, null)
                 .create();
 
         return dialog;
     }
 
-    private void sendResult(int resultCode) {
-        if (getTargetFragment() == null) {
-            return;
-        }
+    public void setOnBoardSelectedListener(OnBoardSelectedListener boardSelectedListener) {
+        this.boardSelectedListener = boardSelectedListener;
+    }
 
-        Intent intent = new Intent();
-        intent.putExtra(EXTRA_SELECTED_BOARD, board);
-
-        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+    public interface OnBoardSelectedListener {
+        void boardSelected(Board board);
     }
 }

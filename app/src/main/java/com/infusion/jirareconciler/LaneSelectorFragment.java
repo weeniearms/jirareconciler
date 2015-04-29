@@ -36,6 +36,7 @@ public class LaneSelectorFragment extends BaseDialogFragment {
     private BoardDetails boardDetails;
 
     @InjectView(R.id.lanes_list) ListView listView;
+    private OnLanesSelectedListener lanesSelectedListener;
 
     public static LaneSelectorFragment newInstance(Board board, BoardDetails boardDetails) {
         Bundle args = new Bundle();
@@ -69,16 +70,12 @@ public class LaneSelectorFragment extends BaseDialogFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                sendResult(Activity.RESULT_OK);
+                                if (lanesSelectedListener != null) {
+                                    lanesSelectedListener.lanesSelected(selectedLanes.toArray(new String[selectedLanes.size()]));
+                                }
                             }
                         })
-                .setNegativeButton(android.R.string.cancel,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                sendResult(Activity.RESULT_CANCELED);
-                            }
-                        })
+                .setNegativeButton(android.R.string.cancel, null)
                 .setNeutralButton(R.string.toggle_all, null)
                 .create();
 
@@ -107,17 +104,12 @@ public class LaneSelectorFragment extends BaseDialogFragment {
         return selectorDialog;
     }
 
-    private void sendResult(int resultCode) {
-        if (getTargetFragment() == null) {
-            return;
-        }
+    public void setOnLanesSelectedListener(OnLanesSelectedListener lanesSelectedListener) {
+        this.lanesSelectedListener = lanesSelectedListener;
+    }
 
-        Intent intent = new Intent();
-        intent.putExtra(EXTRA_BOARD, board);
-        intent.putExtra(EXTRA_BOARD_DETAILS, boardDetails);
-        intent.putExtra(EXTRA_SELECTED_LANES, selectedLanes.toArray(new String[selectedLanes.size()]));
-
-        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+    public interface OnLanesSelectedListener {
+        void lanesSelected(String[] lanes);
     }
 
     class LaneAdapter extends ArrayAdapter<String> {

@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.infusion.jirareconciler"
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -31,6 +31,7 @@ repositories {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.+'
+    compile 'com.getbase:floatingactionbutton:1.7.0'
     compile 'com.journeyapps:zxing-android-embedded:2.3.0@aar'
     compile 'com.journeyapps:zxing-android-legacy:2.3.0@aar'
     compile 'com.journeyapps:zxing-android-integration:2.3.0@aar'

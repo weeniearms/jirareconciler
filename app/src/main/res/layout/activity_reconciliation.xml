@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include
+        android:id="@+id/app_bar"
+        layout="@layout/app_bar" />
+
+    <ListView
+        android:id="@+id/reconciliation_issues_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/app_bar"
+        android:divider="@null" />
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/reconciliation_export"
+        android:layout_alignTop="@+id/app_bar"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="28dp"
+        android:elevation="8dp"
+        fab:fab_icon="@drawable/ic_action_export"
+        fab:fab_colorNormal="@color/colorAccent"
+        fab:fab_size="mini"
+        />
+</RelativeLayout>

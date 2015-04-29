@@ -9,10 +9,8 @@
     <string name="user_hint">Enter your JIRA user ID</string>
     <string name="password">Password</string>
     <string name="password_hint">Enter your JIRA password</string>
-    <string name="board">Board</string>
     <string name="scan_ticket">Scan ticket</string>
     <string name="new_reconciliation">New reconciliation</string>
-    <string name="date">Date</string>
     <string name="board_picker_title">Select board:</string>
     <string name="no_lanes">Selected board has no lanes</string>
     <string name="no_issues">Selected board has no issues</string>

@@ -17,10 +17,8 @@ import dagger.Provides;
  */
 @Module(
         injects = {
-                BoardSelectorFragment.class, CaptureFragment.class, CaptureActivity.class,
-                ReconciliationActivity.class, ReconciliationFragment.class,
-                ReconciliationListActivity.class, ReconciliationListFragment.class,
-                SettingsActivity.class, SettingsFragment.class, LaneSelectorFragment.class
+                BoardSelectorFragment.class, CaptureActivity.class, ReconciliationActivity.class,
+                ReconciliationListActivity.class, SettingsActivity.class, LaneSelectorFragment.class
         })
 public class AppModule {
     private static final String RECONCILIATIONS_FILENAME = "reconciliations.json";
