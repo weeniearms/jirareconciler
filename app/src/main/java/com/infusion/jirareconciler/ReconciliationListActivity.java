@@ -275,7 +275,7 @@ public class ReconciliationListActivity extends BaseActivity {
             }
 
             FragmentManager fragmentManager = ReconciliationListActivity.this.getSupportFragmentManager();
-            LaneSelectorFragment dialog = LaneSelectorFragment.newInstance(board, boardDetails);
+            LaneSelectorFragment dialog = LaneSelectorFragment.newInstance(boardDetails);
             dialog.setOnLanesSelectedListener(new LaneSelectorFragment.OnLanesSelectedListener() {
                 @Override
                 public void lanesSelected(String[] lanes) {

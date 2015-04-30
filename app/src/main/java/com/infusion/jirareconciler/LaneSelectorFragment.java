@@ -1,10 +1,8 @@
 package com.infusion.jirareconciler;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +16,9 @@ import com.infusion.jirareconciler.base.BaseDialogFragment;
 import com.infusion.jirareconciler.jira.Board;
 import com.infusion.jirareconciler.jira.BoardDetails;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import butterknife.ButterKnife;
@@ -28,19 +28,15 @@ import butterknife.InjectView;
  * Created by rcieslak on 29/04/2015.
  */
 public class LaneSelectorFragment extends BaseDialogFragment {
-    public static final String EXTRA_SELECTED_LANES = "com.infusion.jirareconciler.selected_lanes";
     public static final String EXTRA_BOARD_DETAILS = "com.infusion.jirareconciler.board_details";
-    public static final String EXTRA_BOARD = "com.infusion.jirareconciler.board";
     private final Set<String> selectedLanes = new HashSet<>();
-    private Board board;
     private BoardDetails boardDetails;
 
     @InjectView(R.id.lanes_list) ListView listView;
     private OnLanesSelectedListener lanesSelectedListener;
 
-    public static LaneSelectorFragment newInstance(Board board, BoardDetails boardDetails) {
+    public static LaneSelectorFragment newInstance(BoardDetails boardDetails) {
         Bundle args = new Bundle();
-        args.putSerializable(EXTRA_BOARD, board);
         args.putSerializable(EXTRA_BOARD_DETAILS, boardDetails);
 
         LaneSelectorFragment fragment = new LaneSelectorFragment();
@@ -51,7 +47,6 @@ public class LaneSelectorFragment extends BaseDialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        board = (Board) getArguments().getSerializable(EXTRA_BOARD);
         boardDetails = (BoardDetails) getArguments().getSerializable(EXTRA_BOARD_DETAILS);
 
         for (String lane : boardDetails.getLanes()) {
@@ -70,8 +65,15 @@ public class LaneSelectorFragment extends BaseDialogFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                List<String> lanes = new ArrayList<>();
+                                for (String lane : boardDetails.getLanes()) {
+                                    if (selectedLanes.contains(lane)) {
+                                        lanes.add(lane);
+                                    }
+                                }
+
                                 if (lanesSelectedListener != null) {
-                                    lanesSelectedListener.lanesSelected(selectedLanes.toArray(new String[selectedLanes.size()]));
+                                    lanesSelectedListener.lanesSelected(lanes.toArray(new String[lanes.size()]));
                                 }
                             }
                         })
