@@ -2,16 +2,15 @@ package com.infusion.jirareconciler;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.NavUtils;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -59,6 +58,7 @@ public class ReconciliationActivity extends BaseActivity {
     private View containerHeader;
     private TextView boardTextView;
     private TextView dateTextView;
+    private ProgressDialog progressDialog;
 
     @Inject JiraHelper jiraHelper;
     @Inject IssueCardsGenerator generator;
@@ -77,6 +77,9 @@ public class ReconciliationActivity extends BaseActivity {
         ButterKnife.inject(this);
 
         setSupportActionBar(toolbar);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
 
         UUID reconciliationId = (UUID) getIntent().getSerializableExtra(EXTRA_RECONCILIATION_ID);
         reconciliation = reconciliationStore.getReconciliation(reconciliationId);
@@ -178,18 +181,7 @@ public class ReconciliationActivity extends BaseActivity {
     }
     @OnClick(R.id.reconciliation_export)
     public void exportIssues() {
-        try {
-            String issuesFile = "issues.pdf";
-            generator.generateCards(reconciliation.getIssues(), issuesFile);
-
-            Intent exportIntent = new Intent(Intent.ACTION_VIEW);
-            exportIntent.setDataAndType(
-                    Uri.parse("content://" + IssueCardsFileProvider.AUTHORITY + "/" + issuesFile),
-                    "application/pdf");
-            startActivity(exportIntent);
-        } catch (IOException | DocumentException e) {
-            Toast.makeText(this, "Error occured while generating cards", Toast.LENGTH_SHORT).show();
-        }
+        new ExportIssuesTask().execute();
     }
 
     public int dpToPx(int dp) {
@@ -209,6 +201,72 @@ public class ReconciliationActivity extends BaseActivity {
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(!visible);
+        }
+    }
+
+    class ExportIssuesTask extends AsyncTask<Void, Void, Void> {
+        private final String issuesFile = "issues.pdf";
+        private AlertDialog exportActionDialog;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                generator.generateCards(reconciliation.getIssues(), issuesFile);
+            } catch (IOException | DocumentException e) {
+                Toast.makeText(ReconciliationActivity.this, R.string.error_generating, Toast.LENGTH_SHORT).show();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progressDialog.setMessage(getString(R.string.generating_cards));
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            progressDialog.dismiss();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(ReconciliationActivity.this);
+            builder.setTitle(R.string.select_export_action);
+            builder.setSingleChoiceItems(
+                    new String[] { getString(R.string.export_open), getString(R.string.export_send) },
+                    -1,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int item) {
+                            Uri issuesFileUri = Uri.parse("content://" + IssueCardsFileProvider.AUTHORITY + "/" + issuesFile);
+
+                            switch(item)
+                            {
+                                case 0:
+                                    Intent exportIntent = new Intent(Intent.ACTION_VIEW);
+                                    exportIntent.setDataAndType(issuesFileUri, "application/pdf");
+                                    startActivity(exportIntent);
+                                    break;
+                                case 1:
+                                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                                    emailIntent.setType("plain/text");
+                                    emailIntent.putExtra(
+                                            Intent.EXTRA_SUBJECT,
+                                            getString(
+                                                    R.string.reconciliation_email_subject,
+                                                    reconciliation.getBoard(),
+                                                    reconciliation.getDate()));
+                                    emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.reconciliation_email_text));
+                                    emailIntent.putExtra(Intent.EXTRA_STREAM, issuesFileUri);
+                                    startActivity(emailIntent);
+                                    break;
+                            }
+                            exportActionDialog.dismiss();
+                        }
+                    });
+            exportActionDialog = builder.create();
+            exportActionDialog.show();
         }
     }
 
