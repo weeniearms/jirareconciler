@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="export_actions">
+        <item>Open</item>
+        <item>Send</item>
+    </string-array>
+</resources>

@@ -234,9 +234,8 @@ public class ReconciliationActivity extends BaseActivity {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(ReconciliationActivity.this);
             builder.setTitle(R.string.select_export_action);
-            builder.setSingleChoiceItems(
-                    new String[] { getString(R.string.export_open), getString(R.string.export_send) },
-                    -1,
+            builder.setItems(
+                    R.array.export_actions,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int item) {
                             Uri issuesFileUri = Uri.parse("content://" + IssueCardsFileProvider.AUTHORITY + "/" + issuesFile);
