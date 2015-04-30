@@ -40,7 +40,7 @@
                 android:value=".ReconciliationListActivity" />
         </activity>
         <activity
-            android:name=".CaptureActivity"
+            android:name=".LaneCaptureActivity"
             android:label="@string/reconciliation"
             android:screenOrientation="portrait">
             <meta-data

@@ -17,7 +17,7 @@ import dagger.Provides;
  */
 @Module(
         injects = {
-                BoardSelectorFragment.class, CaptureActivity.class, ReconciliationActivity.class,
+                BoardSelectorFragment.class, LaneCaptureActivity.class, ReconciliationActivity.class,
                 ReconciliationListActivity.class, SettingsActivity.class, LaneSelectorFragment.class
         })
 public class AppModule {

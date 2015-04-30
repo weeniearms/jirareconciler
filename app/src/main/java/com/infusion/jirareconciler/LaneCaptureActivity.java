@@ -36,8 +36,8 @@ import butterknife.OnClick;
 /**
  * Created by rcieslak on 21/04/2015.
  */
-public class CaptureActivity extends BaseActivity {
-    private static final Logger LOG = LoggerFactory.getLogger(CaptureActivity.class);
+public class LaneCaptureActivity extends BaseActivity {
+    private static final Logger LOG = LoggerFactory.getLogger(LaneCaptureActivity.class);
     public static final String EXTRA_BOARD_DETAILS = "com.infusion.jirareconciler.board_details";
     public static final String EXTRA_BOARD = "com.infusion.jirareconciler.board";
     public static final String EXTRA_RECONCILIATION = "com.infusion.jirareconciler.reconciliation";
@@ -211,7 +211,7 @@ public class CaptureActivity extends BaseActivity {
 
                                 progressDialog.dismiss();
 
-                                AlertDialog alertDialog = new AlertDialog.Builder(CaptureActivity.this).create();
+                                AlertDialog alertDialog = new AlertDialog.Builder(LaneCaptureActivity.this).create();
                                 alertDialog.setTitle(R.string.lane_captured);
                                 alertDialog.setMessage(getString(R.string.found_issues, issueIds.length));
                                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.next),

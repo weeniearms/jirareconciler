@@ -134,6 +134,14 @@ public class ReconciliationActivity extends BaseActivity {
         setTitle(reconciliation.getBoard());
         boardTextView.setText(reconciliation.getBoard());
         dateTextView.setText(reconciliation.getDate().toString());
+
+        exportIssuesButton.setVisibility(View.INVISIBLE);
+        for (Issue issue : reconciliation.getIssues()) {
+            if (issue.getBoardState() == null || issue.getBoardState().equals("")) {
+                exportIssuesButton.setVisibility(View.VISIBLE);
+                break;
+            }
+        }
     }
 
     @Override

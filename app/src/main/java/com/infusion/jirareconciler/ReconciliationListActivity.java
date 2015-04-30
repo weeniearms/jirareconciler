@@ -157,7 +157,7 @@ public class ReconciliationListActivity extends BaseActivity {
                 updateReconciliations();
                 break;
             case REQUEST_CAPTURE:
-                Reconciliation reconciliation = (Reconciliation) data.getSerializableExtra(CaptureActivity.EXTRA_RECONCILIATION);
+                Reconciliation reconciliation = (Reconciliation) data.getSerializableExtra(LaneCaptureActivity.EXTRA_RECONCILIATION);
                 reconciliationStore.addReconciliation(reconciliation);
                 reconciliationStore.saveReconciliations();
 
@@ -284,10 +284,10 @@ public class ReconciliationListActivity extends BaseActivity {
                         return;
                     }
 
-                    Intent captureIntent = new Intent(ReconciliationListActivity.this, CaptureActivity.class);
-                    captureIntent.putExtra(CaptureActivity.EXTRA_BOARD, board);
-                    captureIntent.putExtra(CaptureActivity.EXTRA_BOARD_DETAILS, boardDetails);
-                    captureIntent.putExtra(CaptureActivity.EXTRA_LANES, lanes);
+                    Intent captureIntent = new Intent(ReconciliationListActivity.this, LaneCaptureActivity.class);
+                    captureIntent.putExtra(LaneCaptureActivity.EXTRA_BOARD, board);
+                    captureIntent.putExtra(LaneCaptureActivity.EXTRA_BOARD_DETAILS, boardDetails);
+                    captureIntent.putExtra(LaneCaptureActivity.EXTRA_LANES, lanes);
                     startActivityForResult(captureIntent, 0);
                 }
             });
