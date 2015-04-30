@@ -174,19 +174,11 @@ public class ReconciliationActivity extends BaseActivity {
             String issuesFile = "issues.pdf";
             generator.generateCards(reconciliation.getIssues(), issuesFile);
 
-            Intent emailIntent = new Intent(Intent.ACTION_SEND);
-            emailIntent.setType("plain/text");
-            emailIntent.putExtra(
-                    Intent.EXTRA_SUBJECT,
-                    getString(
-                            R.string.reconciliation_email_subject,
-                            reconciliation.getBoard(),
-                            reconciliation.getDate()));
-            emailIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.reconciliation_email_text));
-            emailIntent.putExtra(
-                    Intent.EXTRA_STREAM,
-                    Uri.parse("content://" + IssueCardsFileProvider.AUTHORITY + "/" + issuesFile));
-            startActivity(emailIntent);
+            Intent exportIntent = new Intent(Intent.ACTION_VIEW);
+            exportIntent.setDataAndType(
+                    Uri.parse("content://" + IssueCardsFileProvider.AUTHORITY + "/" + issuesFile),
+                    "application/pdf");
+            startActivity(exportIntent);
         } catch (IOException | DocumentException e) {
             Toast.makeText(this, "Error occured while generating cards", Toast.LENGTH_SHORT).show();
         }
