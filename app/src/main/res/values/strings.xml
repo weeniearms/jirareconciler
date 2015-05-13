@@ -34,4 +34,6 @@
     <string name="select_export_action">Select action:</string>
     <string name="error_generating">Error occured while generating cards</string>
     <string name="generating_cards">Generating issue cards</string>
+    <string name="error_board_details">Error retrieving board details.</string>
+    <string name="error_board_list">Error retrieving list of boards.</string>
 </resources>

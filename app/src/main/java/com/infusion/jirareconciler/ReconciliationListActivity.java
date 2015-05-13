@@ -28,6 +28,9 @@ import com.infusion.jirareconciler.jira.JiraHelper;
 import com.infusion.jirareconciler.model.Reconciliation;
 import com.infusion.jirareconciler.model.ReconciliationStore;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -217,10 +220,19 @@ public class ReconciliationListActivity extends BaseActivity {
     }
 
     private class FetchBoardsTask extends AsyncTask<Void, Void, Board[]> {
+        private final Logger LOG = LoggerFactory.getLogger(FetchBoardsTask.class);
+
         @Override
         protected Board[] doInBackground(Void... params) {
-            List<Board> boards = jiraHelper.fetchBoards();
-            return boards.toArray(new Board[boards.size()]);
+            try {
+                List<Board> boards = jiraHelper.fetchBoards();
+                return boards.toArray(new Board[boards.size()]);
+            }
+            catch (Exception e) {
+                LOG.error("Error occurred while retrieving board list", e);
+                Toast.makeText(ReconciliationListActivity.this, R.string.error_board_list, Toast.LENGTH_SHORT).show();
+                return null;
+            }
         }
 
         @Override
@@ -232,6 +244,10 @@ public class ReconciliationListActivity extends BaseActivity {
         @Override
         protected void onPostExecute(Board[] boards) {
             progressDialog.dismiss();
+
+            if (boards == null) {
+                return;
+            }
 
             FragmentManager fragmentManager = ReconciliationListActivity.this.getSupportFragmentManager();
             BoardSelectorFragment dialog = BoardSelectorFragment.newInstance(boards);
@@ -246,12 +262,20 @@ public class ReconciliationListActivity extends BaseActivity {
     }
 
     private class FetchBoardDetailsTask extends AsyncTask<Board, Void, BoardDetails> {
+        private final Logger LOG = LoggerFactory.getLogger(FetchBoardDetailsTask.class);
         private Board board;
 
         @Override
         protected BoardDetails doInBackground(Board... params) {
             board = params[0];
-            return jiraHelper.fetchBoardDetails(board.getId());
+            try {
+                return jiraHelper.fetchBoardDetails(board.getId());
+            }
+            catch (Exception e) {
+                LOG.error("Error occurred while retrieving board details", e);
+                Toast.makeText(ReconciliationListActivity.this, R.string.error_board_details, Toast.LENGTH_SHORT).show();
+                return null;
+            }
         }
 
         @Override
@@ -263,6 +287,10 @@ public class ReconciliationListActivity extends BaseActivity {
         @Override
         protected void onPostExecute(final BoardDetails boardDetails) {
             progressDialog.dismiss();
+
+            if (boardDetails == null) {
+                return;
+            }
 
             if (boardDetails.getLanes().length == 0) {
                 Toast.makeText(ReconciliationListActivity.this, R.string.no_lanes, Toast.LENGTH_SHORT).show();
