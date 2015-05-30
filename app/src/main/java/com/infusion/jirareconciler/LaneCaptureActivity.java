@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -68,7 +69,7 @@ public class LaneCaptureActivity extends BaseActivity {
         board = (Board) getIntent().getSerializableExtra(EXTRA_BOARD);
         boardDetails = (BoardDetails) getIntent().getSerializableExtra(EXTRA_BOARD_DETAILS);
         lanes = (String[]) getIntent().getSerializableExtra(EXTRA_LANES);
-        reconciler = new Reconciler(board, boardDetails);
+        reconciler = new Reconciler(board, boardDetails, Arrays.asList(lanes));
 
         updateCurrentLane();
 

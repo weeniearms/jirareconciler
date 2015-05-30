@@ -65,6 +65,23 @@
             android:hint="@string/password_hint"
             android:inputType="textPassword" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/security" />
+
+        <CheckBox
+            android:id="@+id/setting_ssl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:hint="@string/ssl_hint" />
+
     </LinearLayout>
 
 </RelativeLayout>

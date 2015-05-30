@@ -36,4 +36,6 @@
     <string name="generating_cards">Generating issue cards</string>
     <string name="error_board_details">Error retrieving board details.</string>
     <string name="error_board_list">Error retrieving list of boards.</string>
+    <string name="security">Security</string>
+    <string name="ssl_hint">Ignore certificate errors</string>
 </resources>

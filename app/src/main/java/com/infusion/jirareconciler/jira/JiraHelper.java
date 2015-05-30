@@ -106,7 +106,7 @@ public class JiraHelper {
         try {
             connection.setRequestProperty("Authorization", getUserPass());
 
-            if (connection instanceof HttpsURLConnection) {
+            if (connection instanceof HttpsURLConnection && preferences.getBoolean(SettingsActivity.PREF_IGNORE_CERT_ERRORS, false)) {
                 acceptAllCerts((HttpsURLConnection) connection);
             }
 

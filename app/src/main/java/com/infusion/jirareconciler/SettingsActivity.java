@@ -6,6 +6,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.infusion.jirareconciler.base.BaseActivity;
@@ -14,6 +15,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnCheckedChanged;
 import butterknife.OnTextChanged;
 
 /**
@@ -23,14 +25,16 @@ public class SettingsActivity extends BaseActivity {
     public static final String PREF_JIRA_URL = "jira_url";
     public static final String PREF_JIRA_USER = "jira_user";
     public static final String PREF_JIRA_PASSWORD = "jira_password";
+    public static final String PREF_IGNORE_CERT_ERRORS = "ignore_cert_errors";
 
     @Inject
     SharedPreferences preferences;
 
     @InjectView(R.id.app_bar) Toolbar toolbar;
     @InjectView(R.id.setting_url) EditText urlEditText;
-    @InjectView(R.id.setting_user)  EditText userEditText;
-    @InjectView(R.id.setting_password)  EditText passwordEditText;
+    @InjectView(R.id.setting_user) EditText userEditText;
+    @InjectView(R.id.setting_password) EditText passwordEditText;
+    @InjectView(R.id.setting_ssl) CheckBox sslCheckBox;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,7 @@ public class SettingsActivity extends BaseActivity {
         urlEditText.setText(preferences.getString(PREF_JIRA_URL, null));
         userEditText.setText(preferences.getString(PREF_JIRA_USER, null));
         passwordEditText.setText(preferences.getString(PREF_JIRA_PASSWORD, null));
+        sslCheckBox.setChecked(preferences.getBoolean(PREF_IGNORE_CERT_ERRORS, false));
 
         ActionBar actionBar = getSupportActionBar();
         if (NavUtils.getParentActivityName(this) != null) {
@@ -77,5 +82,10 @@ public class SettingsActivity extends BaseActivity {
     @OnTextChanged(R.id.setting_password)
     public void passwordChanged(CharSequence password) {
         preferences.edit().putString(PREF_JIRA_PASSWORD, password.toString()).commit();
+    }
+
+    @OnCheckedChanged(R.id.setting_ssl)
+    public void sslChanged(boolean checked) {
+        preferences.edit().putBoolean(PREF_IGNORE_CERT_ERRORS, checked).commit();
     }
 }
