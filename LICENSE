@@ -1,17 +1,6 @@
-jirareconciler
-=====
-
-[![Build Status](https://travis-ci.org/weeniearms/jirareconciler.svg?branch=master)](https://travis-ci.org/weeniearms/jirareconciler)
-
-An Android app for reconciling physical task boards with JIRA Greenhopper boards based on task cards with QR codes (only the issue key is encoded in the QR code). Once a reconciliation is done, shows a summary with state differences and allows to generate PDFs with missing task cards, so that they can be printed.
-
-## License and Author
-
-Author: Remigiusz Cieślak (aka weeniearms)
-
 The MIT License (MIT)
 
-Copyright (c) 2015 [Infusion](http://www.infusion.com)
+Copyright (c) 2015 Infusion
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
